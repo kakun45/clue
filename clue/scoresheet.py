@@ -22,7 +22,6 @@ class Scoresheet:
         # self.answer_state = collections.defaultdict(lambda: clue.UNKNOWN)
         self.excluded = set()
 
-
     def is_valid(self) -> bool:
         """
         Checks validity.  For example, if two Room cards are both marked as ANSWER,
@@ -30,7 +29,51 @@ class Scoresheet:
 
         @returns true if the data structure is valid
         """
-        pass  # TODO write unit tests
+        # 1. more than one player cannot have the same card
+        for card in clue.ALL_CARDS:
+            count = 0
+            for player in self.players_names:
+                if self.get_ownership(player, card) == clue.HAS_CARD:  # 1
+                    count += 1
+            if count > 1:
+                return False
+
+        # 2. more than 1 card of the same group/type cannot be 'Answer'
+        def _group_of_cards_check(group):
+            count = 0
+            for card in group:  # PLUM, 0
+                if self.is_answer(card):  # DOESNT_HAVE_CARD = 2
+                    count += 1
+                if count > 1:
+                    return False
+            return True
+
+        if not _group_of_cards_check(clue.PEOPLE):
+            return False
+        if not _group_of_cards_check(clue.WEAPONS):
+            return False
+        if not _group_of_cards_check(clue.ROOMS):
+            return False
+
+        # 3. Every card of the same type owned by someone
+        def _excluded_check(group):
+            count = 0
+            for card in group:
+                if self.is_excluded(card):
+                    count += 1
+                if count >= len(group):
+                    return False
+            return True
+
+        if not _excluded_check(clue.PEOPLE):
+            return False
+        if not _excluded_check(clue.WEAPONS):
+            return False
+        if not _excluded_check(clue.ROOMS):
+            return False
+
+        # 4. A single player seems not to have any cards #todo?
+        return True
 
     def set_ownership(self, player: str, card: str, state: int) -> None:
         """
@@ -82,7 +125,7 @@ class Scoresheet:
         """
         If we are certain no one has a card
         :param card:
-        :return:
+        :return: True if Answer
         """
         for player in self.players_names:
             if self.data[card][player] != clue.DOESNT_HAVE_CARD:
@@ -121,12 +164,10 @@ class Scoresheet:
             print("")
             print("----------------------------")
             for card in titles[key]:
-
                 if self.is_excluded(card):
                     print(clue.LIGHT_GRAY, end="")
                 elif self.is_answer(card):
                     print(clue.ANSWER_TEXT, end="")
-
 
                 print(clue.pad_right(card, clue.longest_word(clue.ALL_CARDS)), "|", end="")
                 for player in self.players_names:
@@ -134,7 +175,6 @@ class Scoresheet:
                     print("|", end="")
                 print(clue.NORMAL_TEXT, end="")
                 print("")
-
 
 
     @staticmethod

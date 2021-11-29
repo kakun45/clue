@@ -5,8 +5,7 @@ from clue.scoresheet import Scoresheet
 
 if __name__ == "__main__":
     data = Scoresheet(["Dave", "Olivia", "Xeniya"])
-    #data = Scoresheet([1, 2, 3])
-    print(data)
+    #print(data)
 
     data.set_ownership("Dave", clue.MUSTARD, HAS_CARD)
     data.set_ownership("Dave", clue.GREEN, HAS_CARD)
