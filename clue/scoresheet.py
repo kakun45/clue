@@ -1,9 +1,10 @@
 import collections
+from typing import List
 
 import clue
 from clue import MUSTARD, PLUM
 from clue import BLANK, HAS_CARD, DOESNT_HAVE_CARD
-from typing import List
+
 
 
 class Scoresheet:

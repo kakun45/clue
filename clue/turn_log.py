@@ -23,3 +23,4 @@ class LogEntry:
         self.room = room
         self.asker = asker
         self.answers = answers
+
