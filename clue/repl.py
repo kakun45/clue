@@ -24,27 +24,68 @@ class ClueRepl:
 
         # self.current_entry = turn_log.LogEntry()
 
+    def do_input(self):
+        current_entry = turn_log.LogEntry()
+        while True:
+            print(f"current entry: {current_entry}")
+            line = input("> ")
+            if line.strip().lower() == "quit":
+                return
+
+            try:
+                # TODO deal with "answers" and also do the TODO(s) in parse_line()
+                asker, cards, answers = self.parse_line(line)
+                if asker:
+                    current_entry.asker = asker
+                suspect = None
+                weapon = None
+                room = None
+                for card in cards:
+                    if card in clue.PEOPLE:
+                        if suspect:
+                            raise Exception(f"Two suspects in one line are not accepted: {suspect}, {card}")
+                        else:
+                            suspect = card
+                    elif card in clue.ROOMS:
+                        if room:
+                            raise Exception(f"Two rooms in one line are not accepted: {room}, {card}")
+                        else:
+                            room = card
+                    elif card in clue.WEAPONS:
+                        if weapon:
+                            raise Exception(f"Two weapons in one line are not accepted: {weapon}, {card}")
+                        else:
+                            weapon = card
+
+                if suspect:
+                    current_entry.suspect = suspect
+                if weapon:
+                    current_entry.weapon = weapon
+                if room:
+                    current_entry.room = room
+
+            except Exception as ex:
+                print(ex)
+
     def parse_line(self, line):
         tokens = line.strip().split()
         asker = None
         cards = []
         answers = []
 
-        # TODO: make the player name testing case insensitive
-
-        for token in tokens:
-            if token in self.scoresheet.players_names:
+        for token in tokens:  # when you parse a str you parse it into pieces - tokens
+            if token.upper() in self.scoresheet.players_names:
                 # it must be the asker
-                asker = token
+                asker = token.upper()
             elif "=" in token:
                 # player answer
-                # TODO make sure its a valid player! maybe split on = also
+                # TODO make sure its a valid player! maybe split on = also if bob=yes => error
                 answers.append(token)
             else:
                 # it must be a clue card
                 matches = ClueRepl.resolve_card(token)  # this will return ["Dining", "drawing"] if input "d"
                 if len(matches) != 1:
-                    # we dont know which card they meant
+                    # we don't know which card they meant
                     raise Exception(f"bad input: unable to match {token} to a single card.  Matches={matches}")
                 cards.append(matches[0])
         return asker, cards, answers

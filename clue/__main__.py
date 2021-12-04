@@ -1,12 +1,9 @@
 import clue
 from clue import HAS_CARD, DOESNT_HAVE_CARD
 from clue.scoresheet import Scoresheet
+import clue.repl
 
-
-if __name__ == "__main__":
-    data = Scoresheet(["Dave", "Olivia", "Xeniya"])
-    #print(data)
-
+def printing_test():
     data.set_ownership("Dave", clue.MUSTARD, HAS_CARD)
     data.set_ownership("Dave", clue.GREEN, HAS_CARD)
     data.set_ownership("Dave", clue.SCARLET, HAS_CARD)
@@ -27,3 +24,11 @@ if __name__ == "__main__":
     data.print_scoresheet()
     # r = clue.pad_right("hello", 8)
     # print(f"|{r}|")
+
+
+if __name__ == "__main__":
+    data = Scoresheet(["Dave", "Olivia", "Xeniya"])
+    repl = clue.repl.ClueRepl(data)
+    repl.do_input()
+
+

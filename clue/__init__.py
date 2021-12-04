@@ -3,7 +3,7 @@ from typing import List
 # Card answer States  (whether the card is the answer or not...)
 UNKNOWN = 0  # we dont know if a player has this card yet
 EXCLUDED = 1  # we know that a player has this card, but we might not know which player
-ANSWER = 2  # this was the murder weapon/person/room
+ANSWER = 2  # this was the murder weapon/suspect/room
 
 # Ownership Info  (this is about the combination of a player and card, i.e. a single square on the scoresheet)
 BLANK = 0  # no info about this (player, card) yet

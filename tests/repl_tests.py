@@ -27,3 +27,8 @@ class ReplTests(unittest.TestCase):
         self.assertEqual(asker, "P1")
         self.assertEqual(cards, [clue.PLUM])
         self.assertEqual(answers, ["P2=yes"])
+
+        asker, cards, answers = repl.parse_line("p1 plum P2=yes")
+        self.assertEqual(asker, "P1")
+        self.assertEqual(cards, [clue.PLUM])
+        self.assertEqual(answers, ["P2=yes"])

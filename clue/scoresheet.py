@@ -13,7 +13,7 @@ class Scoresheet:
             raise Exception(f"duplicate player names: {players_names}")
 
         # this MUST be an ordered list for printing to work
-        self.players_names = list(players_names)
+        self.players_names = [s.upper() for s in players_names]
         self.data = {}
         for card in clue.ALL_CARDS:
             self.data[card] = {}
@@ -86,6 +86,7 @@ class Scoresheet:
 
         example:  set_ownership("Olivia", MUSTARD, HAS_CARD)
         """
+        player = player.upper()
         if card not in clue.ALL_CARDS:
             raise ValueError(card)
         if player not in self.players_names:
@@ -98,6 +99,7 @@ class Scoresheet:
         returns a state
         Gets the "ownership" value for that player and card
         """
+        player = player.upper()
         return self.data[card][player]
 
     # def set_card_answerstate(self, card: str, state: int) -> None:

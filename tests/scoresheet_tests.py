@@ -33,11 +33,11 @@ class ScoresheetTests(unittest.TestCase):
     def test_is_answer(self):
         scoresheet = Scoresheet(["Dave", "Olivia", "Xeniya"])
         self.assertFalse(scoresheet.is_answer(clue.PLUM))
-        scoresheet.set_ownership("Dave", clue.PLUM, clue.DOESNT_HAVE_CARD)
+        scoresheet.set_ownership("DAVE", clue.PLUM, clue.DOESNT_HAVE_CARD)
         self.assertFalse(scoresheet.is_answer(clue.PLUM))
-        scoresheet.set_ownership("Olivia", clue.PLUM, clue.DOESNT_HAVE_CARD)
+        scoresheet.set_ownership("OLIVIA", clue.PLUM, clue.DOESNT_HAVE_CARD)
         self.assertFalse(scoresheet.is_answer(clue.PLUM))
-        scoresheet.set_ownership("Xeniya", clue.PLUM, clue.DOESNT_HAVE_CARD)
+        scoresheet.set_ownership("XENIYA", clue.PLUM, clue.DOESNT_HAVE_CARD)
         self.assertTrue(scoresheet.is_answer(clue.PLUM))
 
     def test_box_str(self):
@@ -47,9 +47,9 @@ class ScoresheetTests(unittest.TestCase):
     def test_is_valid(self):
         scoresheet = Scoresheet(["Dave", "Olivia", "Xeniya"])
         self.assertTrue(scoresheet.is_valid())
-        scoresheet.set_ownership("Olivia", clue.FOUNTAIN, clue.HAS_CARD)
+        scoresheet.set_ownership("OLIVIA", clue.FOUNTAIN, clue.HAS_CARD)
         self.assertTrue(scoresheet.is_valid())
-        scoresheet.set_ownership("Xeniya", clue.FOUNTAIN, clue.HAS_CARD)
+        scoresheet.set_ownership("XENIYA", clue.FOUNTAIN, clue.HAS_CARD)
         self.assertFalse(scoresheet.is_valid())
 
     def test_is_valid2(self):
