@@ -33,7 +33,7 @@ class ClueRepl:
                 return
 
             try:
-                # TODO deal with "answers" and also do the TODO(s) in parse_line()
+                # TODO validate answers:'y','n','nope','none','nothing','i_have_one' and make this its own function
                 asker, cards, answers = self.parse_line(line)
                 if asker:
                     current_entry.asker = asker
@@ -64,6 +64,10 @@ class ClueRepl:
                 if room:
                     current_entry.room = room
 
+                for a in answers:
+                    player, response = a
+                    current_entry.answers[player] = response
+
             except Exception as ex:
                 print(ex)
 
@@ -74,13 +78,14 @@ class ClueRepl:
         answers = []
 
         for token in tokens:  # when you parse a str you parse it into pieces - tokens
-            if token.upper() in self.scoresheet.players_names:
-                # it must be the asker
+            if token.upper() in self.scoresheet.players_names:  # it must be the asker
                 asker = token.upper()
             elif "=" in token:
-                # player answer
-                # TODO make sure its a valid player! maybe split on = also if bob=yes => error
-                answers.append(token)
+                player, answer = token.split("=", maxsplit=1)  # maxsplit is number of times to use split()
+                # make sure its a valid player! split on '=' also if bob=yes => error
+                if player.upper() not in self.scoresheet.players_names:
+                    raise Exception(f"bad input: invalid player {player}")
+                answers.append((player, answer))
             else:
                 # it must be a clue card
                 matches = ClueRepl.resolve_card(token)  # this will return ["Dining", "drawing"] if input "d"
