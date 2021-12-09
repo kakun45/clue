@@ -29,6 +29,13 @@ def printing_test():
 if __name__ == "__main__":
     data = Scoresheet(["Dave", "Olivia", "Xeniya"])
     repl = clue.repl.ClueRepl(data)
+    """ 
+    "quit" >> exits the repl hence all the entries are gone! DO NOT type that b4 the end of the game! 
+        # TODO? add 'are you sure?' message
+    "set" >> data.set_ownership('Dave', clue.PLUM, HAS_CARD) 
+    "sheet" >> data.print_scoresheet()
+    """
     repl.do_input()
+    # TODO add an "undo" function
 
 

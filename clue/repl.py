@@ -27,15 +27,52 @@ class ClueRepl:
         while True:
             print(f"current entry: {current_entry}")
             line = input("> ")
-            if line.strip().lower() == "quit":
-                return
 
             try:
-                asker, cards, answers = self.parse_line(line)
-                ClueRepl.update_entry(current_entry, asker, cards, answers)
+                if line.strip().lower() == "quit":
+                    return
+                elif line.strip().lower() == "sheet":
+                    self.scoresheet.print_scoresheet()
+                elif line.strip().lower().startswith("set "):  # can change to 'owner'
+                    cards, player, state = ClueRepl.parse_set_line(line)
+                    for card in cards:
+                        self.scoresheet.set_ownership(player, card, state)
+
+                else:
+                    asker, cards, answers = self.parse_line(line)
+                    ClueRepl.update_entry(current_entry, asker, cards, answers)
 
             except Exception as ex:
                 print(ex)
+
+    @staticmethod
+    def parse_set_line(line):
+        """
+        :param line: is a line like "set plum dave=yes"   |  yes,no, or ? for blank ... or even 'set plum dave=' for blank
+        :return
+        """
+        line = line.strip().lower()
+        tokens = line.split()
+        cards = []
+        if len(tokens) < 3 or "=" not in tokens[-1]:
+            raise Exception(f"Invalid 'set <card> player=' line: {line}")
+        if tokens[0] != "set":
+            raise Exception()
+
+        for card in tokens[1:-1]:  # it must be clue cards
+            matches = ClueRepl.resolve_card(card)  # this will return ["Dining", "drawing"] if input "d"
+            if len(matches) != 1:
+                # we don't know which card they meant
+                raise Exception(f"bad input: unable to match '{card}' to a single card.  Matches={matches}")
+            cards.append(matches[0])
+        player, response = tokens[-1].split("=", maxsplit=1)
+        if response == '':
+            state = clue.BLANK
+        elif ClueRepl.response_bool(response):
+            state = clue.HAS_CARD
+        else:
+            state = clue.DOESNT_HAVE_CARD
+        return cards, player, state  # ([clue.PLUM]: List, "dave": str, clue.HAS_CARD: int)
 
     @staticmethod
     def update_entry(current_entry, asker: str, cards: List[str], answers: List[Tuple[str, bool]]):
@@ -76,13 +113,13 @@ class ClueRepl:
             current_entry.room = room
 
         for a in answers:  # answers - list of tuples
-            player, response = a
+            player, response = a  # a - tuple of two things
             current_entry.answers[player] = response
 
     @staticmethod  # validate answers:'y','n','nope','none','nothing','i_have_one' ...
     def response_bool(s: str) -> bool:
         truthy = ["y", "yes", 'yep', "have", "has", "true", "do"]
-        falsy = ["n", "no", "nope", "none", "false", "don't", "nothing"]
+        falsy = ["n", "no", 'not', "nope", "none", "false", "don't", "nothing"]
         if s.lower() in truthy:
             return True
         elif s.lower() in falsy:
@@ -90,7 +127,7 @@ class ClueRepl:
         else:
             raise Exception(f"invalid entry: {s}")
 
-    def parse_line(self, line):
+    def parse_line(self, line):  # TODO rename to something like parse_guess_line
         tokens = line.strip().split()
         asker = None
         cards = []

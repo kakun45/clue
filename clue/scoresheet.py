@@ -84,14 +84,14 @@ class Scoresheet:
         :card: which card
         :state: the value for the ownership state:  BLANK, HAS_CARD, DOESNT_HAVE_CARD
 
-        example:  set_ownership("Olivia", MUSTARD, HAS_CARD)
+        example:  set_ownership("Olivia", clue.MUSTARD, HAS_CARD)
         """
         player = player.upper()
         if card not in clue.ALL_CARDS:
             raise ValueError(card)
         if player not in self.players_names:
             raise ValueError(player)
-        #self.data.get(card, {}).get(player)  # 0
+        # self.data.get(card, {}).get(player)  # 0
         self.data[card][player] = state
 
     def get_ownership(self, player: str, card: str) -> int:
@@ -139,20 +139,20 @@ class Scoresheet:
         """
         SUSPECTS    | P1| P2| P3|
         ---------------------------
-        (Mustard)   | 0 | 0 | 0 |
-        Green       | 0 | 0 |   |
-        --Plum------| 0 |   |   |
-        Peacock     | 0 | 0 | 1 |
+        (Mustard)   |   |   | 0 |
+        Green       |   | 0 |   |
+        --Plum------|   |   |   |
+        Peacock     |   |   | 1 |
 
         WEAPONS      | P1| P2| P3|
         ---------------------------
-        --Knife------| 1 | 0 | 0 |
+        --Knife------| 1 |   |   |
         Candlestick  | 0 | 0 |   |
 
         ROOMS        | P1| P2| P3|
         ---------------------------
-        --Kitchen----| 1 | 0 | 0 |
-        (Gazebo)     | 0 | 0 | 0 |
+        --Kitchen----| 1 |   |   |
+        (Gazebo)     |   |   |   |
         """
         titles = {"SUSPECTS": clue.PEOPLE, "WEAPONS": clue.WEAPONS, "ROOMS": clue.ROOMS}
         short_names = [s[:3] for s in self.players_names]  # HAS THE SAME ORDER AS self.players_names
@@ -179,7 +179,6 @@ class Scoresheet:
                 print(clue.NORMAL_TEXT, end="")
                 print("")
 
-
     @staticmethod
     def box_str(state: int) -> str:
         """
@@ -192,8 +191,6 @@ class Scoresheet:
         # BLANK -> "   "
         box = {BLANK: "   ", HAS_CARD: " 1 ", DOESNT_HAVE_CARD: " 0 "}
         return box[state]
-
-
 
     def __str__(self):
         return str(self.data)

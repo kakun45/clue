@@ -51,3 +51,11 @@ class ReplTests(unittest.TestCase):
         ClueRepl.update_entry(log_entry, asker="Dave", cards=[clue.KNIFE, clue.DRAWING], answers=[('olivia', True)])
         self.assertEqual(clue.DRAWING, log_entry.room)
         self.assertEqual(log_entry.answers["olivia"], True)
+
+    def test_parse_set_line(self):
+        line = "set plum dave=yes"
+        self.assertEqual(([clue.PLUM], "dave", clue.HAS_CARD), ClueRepl.parse_set_line(line))
+        line2 = "set KNI dave=N"
+        self.assertEqual(([clue.KNIFE], "dave", clue.DOESNT_HAVE_CARD), ClueRepl.parse_set_line(line2))
+        line3 = "set plu kni dini dave=y"
+        ClueRepl.parse_set_line(line3)

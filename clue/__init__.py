@@ -6,7 +6,7 @@ EXCLUDED = 1  # we know that a player has this card, but we might not know which
 ANSWER = 2  # this was the murder weapon/suspect/room
 
 # Ownership Info  (this is about the combination of a player and card, i.e. a single square on the scoresheet)
-BLANK = 0  # no info about this (player, card) yet
+BLANK = 0  # NO info about this (player, card) yet. We don't know if the player has it or doesn't have it
 HAS_CARD = 1
 DOESNT_HAVE_CARD = 2
 
