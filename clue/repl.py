@@ -37,6 +37,12 @@ class ClueRepl:
                     cards, player, state = ClueRepl.parse_set_line(line)
                     for card in cards:
                         self.scoresheet.set_ownership(player, card, state)
+                        #print(f"scoresheet.data[card][player] = state")
+                        if state == clue.BLANK:
+                            print(f"setting {player} and {card} to 'unknown' ")
+                        else:
+                            verb = {clue.HAS_CARD: "has", clue.DOESNT_HAVE_CARD: "doesn't have"}.get(state)
+                            print(f"marking: {player} {verb} {card}")
 
                 else:
                     asker, cards, answers = self.parse_line(line)
