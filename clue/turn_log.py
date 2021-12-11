@@ -3,9 +3,12 @@ from typing import Dict
 import clue
 
 
-class TurnLog:
-    def __init__(self):
-        self.entries = []
+# class TurnLog:
+#     def __init__(self):
+#         self.entries = []
+#
+#     def append(self, entry):
+#         self.entries.append(entry)
 
 
 class LogEntry:

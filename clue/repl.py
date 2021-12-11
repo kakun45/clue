@@ -22,10 +22,25 @@ class ClueRepl:
 
         # self.current_entry = turn_log.LogEntry()
 
+    @staticmethod
+    def prompt_players_list() -> List[str]:
+        """
+        data = Scoresheet(["Dave", "Olivia", "Xeniya"])
+        """
+        players_list = []
+        line = input("Enter the # of players > ")
+        print("Enter the player names in the order they should appear on the scoresheet")
+        number_of_players = int(line)
+        for player in range(number_of_players):
+            name = input(f"Name Player {player + 1} > ").strip()
+            players_list.append(name)
+        return players_list
+
     def do_input(self):
         current_entry = turn_log.LogEntry()
+        turn_history = []
         while True:
-            print(f"current entry: {current_entry}")
+            print(f"Turn {len(turn_history) + 1}: {current_entry}")
             line = input("> ")
 
             try:
@@ -37,17 +52,23 @@ class ClueRepl:
                     cards, player, state = ClueRepl.parse_set_line(line)
                     for card in cards:
                         self.scoresheet.set_ownership(player, card, state)
-                        #print(f"scoresheet.data[card][player] = state")
+                        # print(f"scoresheet.data[card][player] = state")
                         if state == clue.BLANK:
                             print(f"setting {player} and {card} to 'unknown' ")
                         else:
                             verb = {clue.HAS_CARD: "has", clue.DOESNT_HAVE_CARD: "doesn't have"}.get(state)
                             print(f"marking: {player} {verb} {card}")
 
+                elif line.strip().lower() == "next":
+                    # TODO:  check if anything is missing before allowing the player to go to the next turn
+                    turn_history.append(current_entry)
+                    current_entry = turn_log.LogEntry()
                 else:
                     asker, cards, answers = self.parse_line(line)
                     ClueRepl.update_entry(current_entry, asker, cards, answers)
 
+            # todo print out turn history
+            # todo start adding intelligence to figure out the cards players have
             except Exception as ex:
                 print(ex)
 

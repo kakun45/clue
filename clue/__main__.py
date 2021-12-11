@@ -27,7 +27,10 @@ def printing_test():
 
 
 if __name__ == "__main__":
-    data = Scoresheet(["Dave", "Olivia", "Xeniya"])
+
+    players_list = clue.repl.ClueRepl.prompt_players_list()
+    # data = Scoresheet(["Dave", "Olivia", "Xeniya"])
+    data = Scoresheet(players_list)
     repl = clue.repl.ClueRepl(data)
     """ 
     "quit" >> exits the repl hence all the entries are gone! DO NOT type that b4 the end of the game! 
