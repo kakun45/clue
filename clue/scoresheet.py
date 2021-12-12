@@ -23,6 +23,12 @@ class Scoresheet:
         # self.answer_state = collections.defaultdict(lambda: clue.UNKNOWN)
         self.excluded = set()
 
+    def all_cards(self) -> List[str]:
+        return clue.ALL_CARDS
+
+    def player_count(self) -> int:
+        return len(self.players_names)
+
     def is_valid(self) -> bool:
         """
         Checks validity.  For example, if two Room cards are both marked as ANSWER,
@@ -94,6 +100,15 @@ class Scoresheet:
         # self.data.get(card, {}).get(player)  # 0
         self.data[card][player] = state
 
+    def set_fact(self, fact):
+        self.set_ownership(fact.player, fact.card, fact.card_state())
+
+    def has_fact(self, fact) -> bool:
+        """
+        :return: True if the scoresheet already KNOWS the fact, False=DOESN'T know it
+        """
+        return self.get_ownership(fact.player, fact.card) == fact.card_state()  #int == int
+
     def get_ownership(self, player: str, card: str) -> int:
         """
         returns a state
@@ -104,6 +119,14 @@ class Scoresheet:
 
     # def set_card_answerstate(self, card: str, state: int) -> None:
     #     pass
+
+    def get_owner(self, card) -> str:
+        """
+        :return the player who owns the card, or None if we dont know who owns it.
+        """
+        for player in self.players_names:
+            if self.get_ownership(player, card) == clue.HAS_CARD:
+                return player
 
     def set_excluded(self, card: str) -> None:
         """

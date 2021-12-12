@@ -39,6 +39,8 @@ if __name__ == "__main__":
     "sheet" >> data.print_scoresheet()
     """
     repl.do_input()
+    # TODO:  prevent the line parser from allowing you to put the same player in `asker` and `responses`
+    # TODO make sure asker is not in the responses of a log entry (and have a 'reset' command that resets the current entry)
     # TODO add an "undo" function
-
+    # todo while playig save it into a file, and reload from .json
 

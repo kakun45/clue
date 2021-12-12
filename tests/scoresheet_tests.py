@@ -105,3 +105,11 @@ class ScoresheetTests(unittest.TestCase):
         scoresheet.set_ownership("Xeniya", clue.POISON, clue.HAS_CARD)
         scoresheet.set_ownership("Xeniya", clue.HORSESHOE, clue.HAS_CARD)
         self.assertFalse(scoresheet.is_valid())
+
+    def test_get_owner(self):
+        scoresheet = Scoresheet(["Dave", "Olivia", "Xeniya"])
+        self.assertIsNone(scoresheet.get_owner(clue.PLUM))
+        scoresheet.set_ownership("Dave", clue.PLUM, clue.DOESNT_HAVE_CARD)
+        self.assertIsNone(scoresheet.get_owner(clue.PLUM))
+        scoresheet.set_ownership("Dave", clue.PLUM, clue.HAS_CARD)
+        self.assertEqual("DAVE", scoresheet.get_owner(clue.PLUM).upper())

@@ -50,7 +50,7 @@ class ReplTests(unittest.TestCase):
         self.assertEqual(clue.KNIFE, log_entry.weapon)
         ClueRepl.update_entry(log_entry, asker="Dave", cards=[clue.KNIFE, clue.DRAWING], answers=[('olivia', True)])
         self.assertEqual(clue.DRAWING, log_entry.room)
-        self.assertEqual(log_entry.answers["olivia"], True)
+        self.assertEqual(log_entry.responses["olivia"], True)
 
     def test_parse_set_line(self):
         line = "set plum dave=yes"

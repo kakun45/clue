@@ -2,6 +2,7 @@ import copy
 from typing import List, Tuple
 
 import clue
+import clue.rules
 from clue import turn_log
 
 
@@ -15,7 +16,7 @@ class ClueRepl:
 
     """
     def __init__(self, scoresheet):
-        self.scoresheet = scoresheet
+        self.scoresheet = scoresheet  # this is NOT the module scoresheet.py
         for player in scoresheet.players_names:
             assert player not in clue.ALL_CARDS
             assert "=" not in player
@@ -40,7 +41,7 @@ class ClueRepl:
         current_entry = turn_log.LogEntry()
         turn_history = []
         while True:
-            print(f"Turn {len(turn_history) + 1}: {current_entry}")
+            print(f"Current Turn({len(turn_history) + 1}): {current_entry}")
             line = input("> ")
 
             try:
@@ -60,15 +61,32 @@ class ClueRepl:
                             print(f"marking: {player} {verb} {card}")
 
                 elif line.strip().lower() == "next":
-                    # TODO:  check if anything is missing before allowing the player to go to the next turn
-                    turn_history.append(current_entry)
-                    current_entry = turn_log.LogEntry()
+                    # check if anything is missing before allowing the player to go to the next turn
+                    if current_entry.is_valid(self.scoresheet.player_count()):
+                        turn_history.append(current_entry)
+                        current_entry = turn_log.LogEntry()
+                    else:
+                        print(f"Current turn is not finished: {current_entry}")
+                elif line.strip().lower() == "history":    # print out turn history
+                    for i, x in enumerate(turn_history):
+                        print(i + 1, x)
+
+                elif line.strip().lower() == "analyze":
+                    results = clue.rules.run_all(self.scoresheet, turn_history)
+                    print("Analysis Results:")
+                    for result in results:
+                        print(result)
+                        self.scoresheet.set_fact(result)
+                    print("")
+                    # TODO:  need to do more passes until run_all() returns empty list
+
                 else:
                     asker, cards, answers = self.parse_line(line)
                     ClueRepl.update_entry(current_entry, asker, cards, answers)
 
-            # todo print out turn history
+
             # todo start adding intelligence to figure out the cards players have
+            # todo set up a 'test' case with preset players and scoresheet partially filled up
             except Exception as ex:
                 print(ex)
 
@@ -141,7 +159,7 @@ class ClueRepl:
 
         for a in answers:  # answers - list of tuples
             player, response = a  # a - tuple of two things
-            current_entry.answers[player] = response
+            current_entry.responses[player] = response
 
     @staticmethod  # validate answers:'y','n','nope','none','nothing','i_have_one' ...
     def response_bool(s: str) -> bool:
