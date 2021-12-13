@@ -120,6 +120,12 @@ class Scoresheet:
     # def set_card_answerstate(self, card: str, state: int) -> None:
     #     pass
 
+    def get_ownership_cards(self, player: str, cards: List[str]) -> List[int]:
+        results = []
+        for card in cards:
+            results.append(self.get_ownership(player, card))
+        return results
+
     def get_owner(self, card) -> str:
         """
         :return the player who owns the card, or None if we dont know who owns it.
@@ -201,6 +207,9 @@ class Scoresheet:
                     print("|", end="")
                 print(clue.NORMAL_TEXT, end="")
                 print("")
+
+                #todo save vertical space: print section heading inverted
+                # todo mark set card=y and turn card player=y
 
     @staticmethod
     def box_str(state: int) -> str:

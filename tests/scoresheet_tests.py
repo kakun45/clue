@@ -113,3 +113,12 @@ class ScoresheetTests(unittest.TestCase):
         self.assertIsNone(scoresheet.get_owner(clue.PLUM))
         scoresheet.set_ownership("Dave", clue.PLUM, clue.HAS_CARD)
         self.assertEqual("DAVE", scoresheet.get_owner(clue.PLUM).upper())
+
+    def test_get_ownership_cards(self):
+        scoresheet = Scoresheet(["Dave", "Xeniya", "Olivia"])
+        self.assertEqual([clue.BLANK, clue.BLANK, clue.BLANK],
+                         scoresheet.get_ownership_cards("Dave", [clue.PLUM, clue.KNIFE, clue.STUDIO]))
+        scoresheet.set_ownership("Dave", clue.KNIFE, clue.DOESNT_HAVE_CARD)
+        scoresheet.set_ownership("Dave", clue.STUDIO, clue.DOESNT_HAVE_CARD)
+        self.assertEqual([clue.BLANK, clue.DOESNT_HAVE_CARD, clue.DOESNT_HAVE_CARD],
+                         scoresheet.get_ownership_cards("Dave", [clue.PLUM, clue.KNIFE, clue.STUDIO]))

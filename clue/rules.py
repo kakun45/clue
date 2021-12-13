@@ -68,17 +68,36 @@ def rule_2(sheet, turn_history) -> List[Fact]:
 
 def rule_3(sheet, turn_history) -> List[Fact]:
     """
+    Check every turn!
     A guesses (Plum, Knife, Gazebo) and B=Yes,C=No.   If scoresheet says B does not have plum or gazebo (B does not have plum and B does not have gazebo),
     then B must have the knife.
 
-
     :param sheet:
     :param turn_history:
-    :return:
+    :return:  List[Fact]
     """
     results = []
-    #todo
+    for turn in turn_history:  # [obj1, obj2]
+        for player_key in turn.responses:  # {player:True, player:False}
+            if turn.responses[player_key]:  # "YES"
+                cards = [turn.suspect, turn.weapon, turn.room]
+                actual_states = sheet.get_ownership_cards(player_key, cards)
+                looking_for = [clue.BLANK, clue.DOESNT_HAVE_CARD, clue.DOESNT_HAVE_CARD]
+                if sorted(actual_states) == sorted(looking_for):
+
+                    the_card = None
+                    for i in range(3):
+                        if actual_states[i] == clue.BLANK:
+                            if the_card:
+                                raise Exception()
+                            the_card = cards[i]
+                    if the_card is None:
+                        raise Exception()
+                    results.append(Fact(player_key, the_card, True))
     return results
+
+    # todo if the asker asks with one of his cards, and 2 ppl have them, we don;t need to know who has it, we mark they
+    #  aren't the answer
 
 
 def run_all(sheet, turn_history) -> List[Fact]:

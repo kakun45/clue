@@ -39,7 +39,7 @@ class LogEntry:
 
         :return: True if all the info is filled out and False if it's missing anything
         """
-        # TODO make sure asker is not in the responses (and have a 'reset' command that resets the current entry)
+        # TODO make sure asker is not in the responses (and have a 'reset' command that resets the current entry) from:
         #  Current Turn(2): B asks (Plum, Wrench, Gazebo), answers:{'a': False, 'b': True}
         return bool(self.suspect and self.weapon and self.room and self.asker and len(self.responses) == player_count - 1)
 

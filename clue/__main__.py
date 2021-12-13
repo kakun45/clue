@@ -44,3 +44,14 @@ if __name__ == "__main__":
     # TODO add an "undo" function
     # todo while playig save it into a file, and reload from .json
 
+
+    # todo add which player I'm to fill up all 0's after initial set command
+
+    # todo invalid entry: t for true
+    # todo contrast is not enough, or different print function
+
+    # todo confirm when I'm about overwrite existing info of a turn b4 removing a previous player
+    # todo propose whose turn it is? unless someone won't make it into a room
+    # todo when I type analyze it should to all of them it should keep running analyze until there is no new info
+    # todo highlght in red
+    # todo select which game we're using: with wich set of weapons/suspects/rooms

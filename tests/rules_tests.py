@@ -42,3 +42,19 @@ class RulesTests(unittest.TestCase):
         results2 = rules.rule_2(None, turn_history2)
         self.assertEqual(9, len(results2))
         self.assertFalse(rules.Fact('Xen', clue.PLUM, False) in results2)
+
+    def test_rule3(self):
+        scoresheet = Scoresheet(["Dav", "Xen", "Oli"])
+        turn1_history = [LogEntry(clue.PLUM, clue.KNIFE, clue.STUDIO, "Dav", {"Xen": True, "Oli": False})]
+        results = rules.rule_3(scoresheet, turn1_history)
+        self.assertEqual(0, len(results))
+        scoresheet.set_ownership("Xen", clue.PLUM, clue.DOESNT_HAVE_CARD)
+        scoresheet.set_ownership("Xen", clue.KNIFE, clue.DOESNT_HAVE_CARD)
+        turn1_history = [LogEntry(clue.PLUM, clue.KNIFE, clue.STUDIO, "Dav", {"Xen": True, "Oli": False})]
+        results2 = rules.rule_3(scoresheet, turn1_history)
+        self.assertEqual(1, len(results2))
+
+        turn2_history = [LogEntry(clue.PLUM, clue.KNIFE, clue.STUDIO, "Dav", {"Xen": True, "Oli": False}),
+                         LogEntry(clue.SCARLET, clue.WRENCH, clue.STUDIO, "Xen", {"Dav": False, "Oli": False})]
+        results3 = rules.rule_3(scoresheet, turn2_history)
+        self.assertEqual(1, len(results3))
