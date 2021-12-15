@@ -37,6 +37,23 @@ class ClueRepl:
             players_list.append(name)
         return players_list
 
+    @staticmethod
+    def select_player(player_list: List[str]) -> str:
+        """
+        Prints a list like:
+        0) Player A
+        1) Player B
+        2) Player C
+            select which player you are> 1
+
+        :param player_list:
+        :return: str
+        """
+        for i,player in enumerate(player_list):
+            print(f"{i+1}) Player {player}")
+        line = int(input("select which player you are> "))
+        return player_list[line-1]
+
     def do_input(self):
         current_entry = turn_log.LogEntry()
         turn_history = []
@@ -72,21 +89,36 @@ class ClueRepl:
                         print(i + 1, x)
 
                 elif line.strip().lower() == "analyze":
-                    results = clue.rules.run_all(self.scoresheet, turn_history)
                     print("Analysis Results:")
-                    for result in results:
-                        print(result)
-                        self.scoresheet.set_fact(result)
+                    # need to do more passes until run_all() returns empty list
+                    while True:
+                        results = clue.rules.run_all(self.scoresheet, turn_history)
+                        for result in results:
+                            print(result)
+                            self.scoresheet.set_fact(result)
+                        if len(results) < 1:
+                            break
+                        else:
+                            print("....")
                     print("")
-                    # TODO:  need to do more passes until run_all() returns empty list
 
                 else:
                     asker, cards, answers = self.parse_line(line)
-                    ClueRepl.update_entry(current_entry, asker, cards, answers)
+                    should_update = True
+                    # confirm when I'm about overwrite existing info of a turn b4 removing a previous player
+                    if asker and current_entry.asker:
+                        print(f"Warning: Did you forget to type 'next'?")
+                        yn = input(f"Enter 'y' to change the asker from {current_entry.asker} to {asker}. y/n>")
+                        if yn.strip().lower() == "y":
+                            should_update = True
+                        else:
+                            should_update = False
 
+                    if should_update:
+                        ClueRepl.update_entry(current_entry, asker, cards, answers)
+                    else:
+                        print(f"ignoring this input: {line}")
 
-            # todo start adding intelligence to figure out the cards players have
-            # todo set up a 'test' case with preset players and scoresheet partially filled up
             except Exception as ex:
                 print(ex)
 
@@ -163,8 +195,8 @@ class ClueRepl:
 
     @staticmethod  # validate answers:'y','n','nope','none','nothing','i_have_one' ...
     def response_bool(s: str) -> bool:
-        truthy = ["y", "yes", 'yep', "have", "has", "true", "do"]
-        falsy = ["n", "no", 'not', "nope", "none", "false", "don't", "nothing"]
+        truthy = ["y",  "yes", 'yep', "have", "has", "t", "true", "do"]
+        falsy = ["n", "no", 'not', "nope", "none", "f", "false", "don't", "nothing"]
         if s.lower() in truthy:
             return True
         elif s.lower() in falsy:

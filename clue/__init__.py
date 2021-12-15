@@ -77,6 +77,8 @@ NORMAL_TEXT = "\033[0m"
 LIGHT_GRAY = "\033[37m"
 DARK_GRAY = "\033[90m"
 
+INVERTED = "\033[7m"
+
 # ANSWER_TEXT = "\033[41m"  # red highlight
 ANSWER_TEXT = "\033[1m\033[91m"  # bold red
 # ANSWER_TEXT = "\033[1m\033[93m"  # bold yellow

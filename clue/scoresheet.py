@@ -184,20 +184,21 @@ class Scoresheet:
         (Gazebo)     |   |   |   |
         """
         titles = {"SUSPECTS": clue.PEOPLE, "WEAPONS": clue.WEAPONS, "ROOMS": clue.ROOMS}
-        short_names = [s[:3] for s in self.players_names]  # HAS THE SAME ORDER AS self.players_names
+        short_names = [Scoresheet.short_name(s) for s in self.players_names]  # HAS THE SAME ORDER AS self.players_names
 
         for key in titles:
-            print("")
+            #print("")
+            print(clue.INVERTED, end="")
             print(clue.pad_right(key, clue.longest_word(clue.ALL_CARDS)), "|", end="")
             for player in short_names:  # short names horizontally:  Dav|Oli|Xen|
                 print(player, end="")
                 print("|", end="")
 
-            print("")
-            print("----------------------------")
+            print(clue.NORMAL_TEXT)
+            # print("----------------------------")
             for card in titles[key]:
                 if self.is_excluded(card):
-                    print(clue.LIGHT_GRAY, end="")
+                    print(clue.DARK_GRAY, end="")
                 elif self.is_answer(card):
                     print(clue.ANSWER_TEXT, end="")
 
@@ -210,6 +211,18 @@ class Scoresheet:
 
                 #todo save vertical space: print section heading inverted
                 # todo mark set card=y and turn card player=y
+
+    @staticmethod
+    def short_name(player_name: str) -> str:
+        """
+
+        :param player_name:
+        :return: a version of player_name that is 3 chars long, to be used as a column heading
+        """
+        short_name = player_name[:3]
+        while len(short_name) < 3:
+            short_name += " "
+        return short_name
 
     @staticmethod
     def box_str(state: int) -> str:
@@ -226,3 +239,13 @@ class Scoresheet:
 
     def __str__(self):
         return str(self.data)
+
+
+if __name__ == "__main__":
+    sheet = Scoresheet(["A", "B", "C"])
+    sheet.set_ownership("A", clue.GREEN, clue.HAS_CARD)
+    sheet.set_ownership("A", clue.KNIFE, clue.DOESNT_HAVE_CARD)
+    sheet.set_ownership("B", clue.KNIFE, clue.DOESNT_HAVE_CARD)
+    sheet.set_ownership("C", clue.KNIFE, clue.DOESNT_HAVE_CARD)
+    sheet.set_ownership("A", clue.FOUNTAIN, clue.HAS_CARD)
+    sheet.print_scoresheet()
