@@ -18,7 +18,7 @@ class ClueRepl:
     def __init__(self, scoresheet):
         self.scoresheet = scoresheet  # this is NOT the module scoresheet.py
         for player in scoresheet.players_names:
-            assert player not in clue.ALL_CARDS
+            assert player not in scoresheet.game.all_cards
             assert "=" not in player
 
         # self.current_entry = turn_log.LogEntry()
@@ -51,8 +51,12 @@ class ClueRepl:
         """
         for i,player in enumerate(player_list):
             print(f"{i+1}) Player {player}")
-        line = int(input("select which player you are> "))
-        return player_list[line-1]
+        while True:
+            try:
+                line = int(input("select which player you are> "))
+                return player_list[line - 1]
+            except ValueError:
+                print(f"It MUST be a number.")
 
     def do_input(self):
         current_entry = turn_log.LogEntry()
@@ -67,7 +71,7 @@ class ClueRepl:
                 elif line.strip().lower() == "sheet":
                     self.scoresheet.print_scoresheet()
                 elif line.strip().lower().startswith("set "):  # can change to 'owner'
-                    cards, player, state = ClueRepl.parse_set_line(line)
+                    cards, player, state = ClueRepl.parse_set_line(self.scoresheet.game, line)
                     for card in cards:
                         self.scoresheet.set_ownership(player, card, state)
                         # print(f"scoresheet.data[card][player] = state")
@@ -115,7 +119,7 @@ class ClueRepl:
                             should_update = False
 
                     if should_update:
-                        ClueRepl.update_entry(current_entry, asker, cards, answers)
+                        ClueRepl.update_entry(self.scoresheet.game, current_entry, asker, cards, answers)
                     else:
                         print(f"ignoring this input: {line}")
 
@@ -123,8 +127,9 @@ class ClueRepl:
                 print(ex)
 
     @staticmethod
-    def parse_set_line(line):
+    def parse_set_line(game, line):
         """
+        :param game:
         :param line: is a line like "set plum dave=yes"   |  yes,no, or ? for blank ... or even 'set plum dave=' for blank
         :return
         """
@@ -137,7 +142,7 @@ class ClueRepl:
             raise Exception()
 
         for card in tokens[1:-1]:  # it must be clue cards
-            matches = ClueRepl.resolve_card(card)  # this will return ["Dining", "drawing"] if input "d"
+            matches = ClueRepl.resolve_card(game, card)  # this will return ["Dining", "drawing"] if input "d"
             if len(matches) != 1:
                 # we don't know which card they meant
                 raise Exception(f"bad input: unable to match '{card}' to a single card.  Matches={matches}")
@@ -152,9 +157,10 @@ class ClueRepl:
         return cards, player, state  # ([clue.PLUM]: List, "dave": str, clue.HAS_CARD: int)
 
     @staticmethod
-    def update_entry(current_entry, asker: str, cards: List[str], answers: List[Tuple[str, bool]]):
+    def update_entry(game: clue.Game, current_entry, asker: str, cards: List[str], answers: List[Tuple[str, bool]]):
         """
         Updates `current_entry` using information parsed from parse_line()
+        :param game:
         :param current_entry:  the entry object to modify
         :param asker:  the "asker" returned by parse_line(); should be None if there was no asker in the line
         :param cards:  list of cards returned by parse_line()
@@ -166,17 +172,17 @@ class ClueRepl:
         weapon = None
         room = None
         for card in cards:
-            if card in clue.PEOPLE:
+            if card in game.suspects:
                 if suspect:
                     raise Exception(f"Two suspects in one line are not accepted: {suspect}, {card}")
                 else:
                     suspect = card
-            elif card in clue.ROOMS:
+            elif card in game.rooms:
                 if room:
                     raise Exception(f"Two rooms in one line are not accepted: {room}, {card}")
                 else:
                     room = card
-            elif card in clue.WEAPONS:
+            elif card in game.weapons:
                 if weapon:
                     raise Exception(f"Two weapons in one line are not accepted: {weapon}, {card}")
                 else:
@@ -221,7 +227,7 @@ class ClueRepl:
                 answers.append((player, ClueRepl.response_bool(response)))
             else:
                 # it must be a clue card
-                matches = ClueRepl.resolve_card(token)  # this will return ["Dining", "drawing"] if input "d"
+                matches = ClueRepl.resolve_card(self.scoresheet.game, token)  # this will return ["Dining", "drawing"] if input "d"
                 if len(matches) != 1:
                     # we don't know which card they meant
                     raise Exception(f"bad input: unable to match {token} to a single card.  Matches={matches}")
@@ -229,7 +235,7 @@ class ClueRepl:
         return asker, cards, answers
 
     @staticmethod
-    def resolve_card(prefix: str) -> List[str]:
+    def resolve_card(game: clue.Game, prefix: str) -> List[str]:
         """
             # prefix="gr"  ->   ["GREEN"]
             # prefic="D"   ->   ["DINING", "DRAWING"]
@@ -238,7 +244,7 @@ class ClueRepl:
         """
         results = []
         prefix = prefix.upper()
-        for card in clue.ALL_CARDS:
+        for card in game.all_cards:
             if card.upper().startswith(prefix):
                 results.append(card)
         return results

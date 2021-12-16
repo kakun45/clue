@@ -3,19 +3,19 @@ from typing import List
 
 import clue
 from clue import MUSTARD, PLUM
-from clue import BLANK, HAS_CARD, DOESNT_HAVE_CARD
-
+from clue import BLANK, HAS_CARD, DOESNT_HAVE_CARD, MASTER_DETECTIVE
 
 
 class Scoresheet:
-    def __init__(self, players_names: List[str]):
+    def __init__(self, players_names: List[str], game: clue.Game = MASTER_DETECTIVE):
         if len(players_names) != len(set(players_names)):
             raise Exception(f"duplicate player names: {players_names}")
 
         # this MUST be an ordered list for printing to work
         self.players_names = [s.upper() for s in players_names]
+        self.game = game
         self.data = {}
-        for card in clue.ALL_CARDS:
+        for card in game.all_cards:  # clue.ALL_CARDS:
             self.data[card] = {}
             # self.data[PLUM] = {}
             for player in self.players_names:
@@ -24,7 +24,7 @@ class Scoresheet:
         self.excluded = set()
 
     def all_cards(self) -> List[str]:
-        return clue.ALL_CARDS
+        return self.game.all_cards
 
     def player_count(self) -> int:
         return len(self.players_names)
@@ -37,7 +37,7 @@ class Scoresheet:
         @returns true if the data structure is valid
         """
         # 1. more than one player cannot have the same card
-        for card in clue.ALL_CARDS:
+        for card in self.game.all_cards:
             count = 0
             for player in self.players_names:
                 if self.get_ownership(player, card) == clue.HAS_CARD:  # 1
@@ -55,11 +55,11 @@ class Scoresheet:
                     return False
             return True
 
-        if not _group_of_cards_check(clue.PEOPLE):
+        if not _group_of_cards_check(self.game.suspects):
             return False
-        if not _group_of_cards_check(clue.WEAPONS):
+        if not _group_of_cards_check(self.game.weapons):
             return False
-        if not _group_of_cards_check(clue.ROOMS):
+        if not _group_of_cards_check(self.game.rooms):
             return False
 
         # 3. Every card of the same type owned by someone
@@ -72,11 +72,11 @@ class Scoresheet:
                     return False
             return True
 
-        if not _excluded_check(clue.PEOPLE):
+        if not _excluded_check(self.game.suspects):
             return False
-        if not _excluded_check(clue.WEAPONS):
+        if not _excluded_check(self.game.weapons):
             return False
-        if not _excluded_check(clue.ROOMS):
+        if not _excluded_check(self.game.rooms):
             return False
 
         # 4. A single player seems not to have any cards #todo?
@@ -93,7 +93,7 @@ class Scoresheet:
         example:  set_ownership("Olivia", clue.MUSTARD, HAS_CARD)
         """
         player = player.upper()
-        if card not in clue.ALL_CARDS:
+        if card not in self.game.all_cards:
             raise ValueError(card)
         if player not in self.players_names:
             raise ValueError(player)
@@ -183,13 +183,13 @@ class Scoresheet:
         --Kitchen----| 1 |   |   |
         (Gazebo)     |   |   |   |
         """
-        titles = {"SUSPECTS": clue.PEOPLE, "WEAPONS": clue.WEAPONS, "ROOMS": clue.ROOMS}
+        titles = {"SUSPECTS": self.game.suspects, "WEAPONS": self.game.weapons, "ROOMS": self.game.rooms}
         short_names = [Scoresheet.short_name(s) for s in self.players_names]  # HAS THE SAME ORDER AS self.players_names
 
         for key in titles:
             #print("")
             print(clue.INVERTED, end="")
-            print(clue.pad_right(key, clue.longest_word(clue.ALL_CARDS)), "|", end="")
+            print(clue.pad_right(key, clue.longest_word(self.game.all_cards)), "|", end="")
             for player in short_names:  # short names horizontally:  Dav|Oli|Xen|
                 print(player, end="")
                 print("|", end="")
@@ -202,7 +202,7 @@ class Scoresheet:
                 elif self.is_answer(card):
                     print(clue.ANSWER_TEXT, end="")
 
-                print(clue.pad_right(card, clue.longest_word(clue.ALL_CARDS)), "|", end="")
+                print(clue.pad_right(card, clue.longest_word(self.game.all_cards)), "|", end="")
                 for player in self.players_names:
                     print(self.box_str(self.get_ownership(player, card)), end="")
                     print("|", end="")

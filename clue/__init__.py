@@ -1,5 +1,13 @@
 from typing import List
 
+
+class Game:
+    def __init__(self, suspects, weapons, rooms):
+        self.suspects = suspects
+        self.weapons = weapons
+        self.rooms = rooms
+        self.all_cards = suspects + weapons + rooms
+
 # Card answer States  (whether the card is the answer or not...)
 UNKNOWN = 0  # we dont know if a player has this card yet
 EXCLUDED = 1  # we know that a player has this card, but we might not know which player
@@ -50,7 +58,38 @@ FOUNTAIN = "Fountain"
 
 ROOMS = [COURTYARD, GAZEBO, DRAWING, DINING, KITCHEN, CARRIAGE, TROPHY, CONSERVATORY, STUDIO, BILLIARD, LIBRARY, FOUNTAIN]
 
-ALL_CARDS = PEOPLE + WEAPONS + ROOMS
+# ALL_CARDS = PEOPLE + WEAPONS + ROOMS
+
+MASTER_DETECTIVE = Game(PEOPLE, WEAPONS, ROOMS)
+GREEN_BOARD = Game(
+    suspects=[
+        MUSTARD,
+        PLUM,
+        GREEN,
+        PEACOCK,
+        SCARLET,
+        WHITE,
+    ],
+    weapons=[
+        KNIFE,
+        CANDLESTICK,
+        REVOLVER,
+        ROPE,
+        PIPE,
+        WRENCH,
+    ],
+    rooms=[
+        "Hall",
+        "Lounge",
+        DINING,
+        KITCHEN,
+        "Ballroom",
+        CONSERVATORY,
+        BILLIARD,
+        LIBRARY,
+        "Study",
+    ],
+)
 
 
 def longest_word(words: List[str]):

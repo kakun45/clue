@@ -14,12 +14,12 @@ class ReplTests(unittest.TestCase):
 
     def test_resolve_card(self):
         repl = ClueRepl(self._ss())
-        self.assertEqual([clue.MUSTARD], repl.resolve_card("Mu"))
-        self.assertEqual([clue.MUSTARD], repl.resolve_card("MU"))
-        self.assertEqual([clue.MUSTARD], repl.resolve_card("mu"))
-        self.assertEqual(sorted([clue.DINING, clue.DRAWING]), sorted(repl.resolve_card("d")))
-        self.assertEqual([], repl.resolve_card("z"))
-        self.assertEqual([clue.PLUM], repl.resolve_card("plum"))
+        self.assertEqual([clue.MUSTARD], repl.resolve_card(clue.MASTER_DETECTIVE, "Mu"))
+        self.assertEqual([clue.MUSTARD], repl.resolve_card(clue.MASTER_DETECTIVE, "MU"))
+        self.assertEqual([clue.MUSTARD], repl.resolve_card(clue.MASTER_DETECTIVE, "mu"))
+        self.assertEqual(sorted([clue.DINING, clue.DRAWING]), sorted(repl.resolve_card(clue.MASTER_DETECTIVE, "d")))
+        self.assertEqual([], repl.resolve_card(clue.MASTER_DETECTIVE, "z"))
+        self.assertEqual([clue.PLUM], repl.resolve_card(clue.MASTER_DETECTIVE, "plum"))
 
     def test_parse_line(self):
         repl = ClueRepl(self._ss())
@@ -44,18 +44,18 @@ class ReplTests(unittest.TestCase):
     def test_update_entry(self):
         log_entry = LogEntry()
 
-        ClueRepl.update_entry(log_entry, asker="Dave", cards=[], answers=[])
+        ClueRepl.update_entry(clue.MASTER_DETECTIVE, log_entry, asker="Dave", cards=[], answers=[])
         self.assertEqual("Dave", log_entry.asker)
-        ClueRepl.update_entry(log_entry, asker="Dave", cards=[clue.KNIFE], answers=[])
+        ClueRepl.update_entry(clue.MASTER_DETECTIVE, log_entry, asker="Dave", cards=[clue.KNIFE], answers=[])
         self.assertEqual(clue.KNIFE, log_entry.weapon)
-        ClueRepl.update_entry(log_entry, asker="Dave", cards=[clue.KNIFE, clue.DRAWING], answers=[('olivia', True)])
+        ClueRepl.update_entry(clue.MASTER_DETECTIVE, log_entry, asker="Dave", cards=[clue.KNIFE, clue.DRAWING], answers=[('olivia', True)])
         self.assertEqual(clue.DRAWING, log_entry.room)
         self.assertEqual(log_entry.responses["olivia"], True)
 
     def test_parse_set_line(self):
         line = "set plum dave=yes"
-        self.assertEqual(([clue.PLUM], "dave", clue.HAS_CARD), ClueRepl.parse_set_line(line))
+        self.assertEqual(([clue.PLUM], "dave", clue.HAS_CARD), ClueRepl.parse_set_line(clue.MASTER_DETECTIVE, line))
         line2 = "set KNI dave=N"
-        self.assertEqual(([clue.KNIFE], "dave", clue.DOESNT_HAVE_CARD), ClueRepl.parse_set_line(line2))
+        self.assertEqual(([clue.KNIFE], "dave", clue.DOESNT_HAVE_CARD), ClueRepl.parse_set_line(clue.MASTER_DETECTIVE, line2))
         line3 = "set plu kni dini dave=y"
-        ClueRepl.parse_set_line(line3)
+        ClueRepl.parse_set_line(clue.MASTER_DETECTIVE, line3)

@@ -3,7 +3,7 @@ from clue import HAS_CARD, DOESNT_HAVE_CARD
 from clue.scoresheet import Scoresheet
 import clue.repl
 
-def printing_test():
+def printing_test(data):
     data.set_ownership("Dave", clue.MUSTARD, HAS_CARD)
     data.set_ownership("Dave", clue.GREEN, HAS_CARD)
     data.set_ownership("Dave", clue.SCARLET, HAS_CARD)
@@ -27,12 +27,14 @@ def printing_test():
 
 
 def main():
+    # game = clue.MASTER_DETECTIVE
+    game = clue.GREEN_BOARD
     players_list = clue.repl.ClueRepl.prompt_players_list()
     player = clue.repl.ClueRepl.select_player(players_list)
     # add which player I'm to fill up all 0's after initial set command
     print(f"You are player {player}")
-    data = Scoresheet(players_list)
-    for card in clue.ALL_CARDS:
+    data = Scoresheet(players_list, game)
+    for card in game.all_cards:
         data.set_ownership(player, card, clue.DOESNT_HAVE_CARD)
 
     repl = clue.repl.ClueRepl(data)
@@ -55,6 +57,10 @@ if __name__ == "__main__":
     # todo propose whose turn it is? unless someone won't make it into a room
     # todo start adding intelligence to figure out the cards players have >> WIP
     # todo set up a 'test' case with preset players and scoresheet partially filled up
+    # todo combine 'next' + 'analyze'
 
     # todo when I type analyze it should to all of them it should keep running analyze until there is no new info
     # todo select which game we're using: with wich set of weapons/suspects/rooms
+
+
+    # todo VS typing 2ce player has the card "Dave=y" and "set card player=y" let it figure out only one entry of either
