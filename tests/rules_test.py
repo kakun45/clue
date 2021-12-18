@@ -58,3 +58,19 @@ class RulesTests(unittest.TestCase):
                          LogEntry(clue.SCARLET, clue.WRENCH, clue.STUDIO, "Xen", {"Dav": False, "Oli": False})]
         results3 = rules.rule_3(scoresheet, turn2_history)
         self.assertEqual(1, len(results3))
+
+    def test_rule4(self):
+        scoresheet = Scoresheet(["Dav", "Xen", "Oli"])
+        results = rules.rule_4(scoresheet, [])
+        self.assertEqual(0, len(results))
+
+        scoresheet.set_ownership("Dav", clue.KNIFE, clue.HAS_CARD)
+        results = rules.rule_4(scoresheet, [])
+        self.assertEqual(0, len(results))
+        scoresheet.set_ownership("Dav", clue.HORSESHOE, clue.DOESNT_HAVE_CARD)
+
+        for card in [c for c in clue.MASTER_DETECTIVE.weapons if c != clue.HORSESHOE]:
+            scoresheet.set_ownership("Dav", card, clue.HAS_CARD)
+
+        results = rules.rule_4(scoresheet, [])
+        self.assertEqual(3, len(results))

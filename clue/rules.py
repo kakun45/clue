@@ -96,12 +96,47 @@ def rule_3(sheet, turn_history) -> List[Fact]:
                     results.append(Fact(player_key, the_card, True))
     return results
 
+
+def rule_4(sheet, turn_history) -> List[Fact]:
+    """
+    Every weapon except one is own by a player, that One is an Answer
+    :param sheet:
+    :param turn_history:
+    :return:
+    """
+    def r4(sheet, cards: List[str]) -> List[Fact]:
+        potential_answers = []
+        for card in cards:
+            if not sheet.is_excluded(card):  # situation when BLANK or DOESNT_HAVE_CARD for every player in a row
+                potential_answers.append(card)
+        if len(potential_answers) == 1:
+            # if card is the answer
+            results = []
+            for player in sheet.players_names:
+                results.append(Fact(player, potential_answers[0], False))
+            return results
+        else:
+            return []
+
+    return r4(sheet, sheet.game.suspects) + r4(sheet, sheet.game.weapons) + r4(sheet, sheet.game.rooms)
+
+
+def rule_5(sheet, turn_history) -> List[Fact]:
     # todo if the asker asks with one of his cards, and 2 ppl have them, we don;t need to know who has it, we mark they
     #  aren't the answer
+    pass
+
+
+def rule_6(sheet, turn_history) -> List[Fact]:
+    pass
+
+
+def rule_7(sheet, turn_history) -> List[Fact]:
+    pass
 
 
 def run_all(sheet, turn_history) -> List[Fact]:
-    rules = [rule_1, rule_2, rule_3]
+    rules = [rule_1, rule_2, rule_3, rule_4]  #rule_5, rule_6, rule_7]
     results = []
     for f in rules:
         results += f(sheet, turn_history)
