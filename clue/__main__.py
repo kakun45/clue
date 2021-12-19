@@ -27,13 +27,18 @@ def printing_test(data):
 
 
 def main():
-    # game = clue.MASTER_DETECTIVE
-    game = clue.GREEN_BOARD
+    print("Which game?")
+    print("1. Master Detective")
+    print("2. (newer version of Clue with green board)")
+    choice = int(input("Enter version of game to play>"))
+    game = [clue.MASTER_DETECTIVE, clue.GREEN_BOARD][choice - 1]
+    #game = clue.MASTER_DETECTIVE
+    # game = clue.GREEN_BOARD
     players_list = clue.repl.ClueRepl.prompt_players_list()
     player = clue.repl.ClueRepl.select_player(players_list)
     # add which player I'm to fill up all 0's after initial set command
     print(f"You are player {player}")
-    data = Scoresheet(players_list, game)
+    data = Scoresheet(players_list, player, game)
     for card in game.all_cards:
         data.set_ownership(player, card, clue.DOESNT_HAVE_CARD)
 

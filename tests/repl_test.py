@@ -10,7 +10,7 @@ class ReplTests(unittest.TestCase):
 
     @staticmethod
     def _ss():
-        return Scoresheet(["P1", "P2", "P3"])
+        return Scoresheet(["P1", "P2", "P3"], current_player='A')
 
     def test_resolve_card(self):
         repl = ClueRepl(self._ss())

@@ -7,12 +7,13 @@ from clue import BLANK, HAS_CARD, DOESNT_HAVE_CARD, MASTER_DETECTIVE
 
 
 class Scoresheet:
-    def __init__(self, players_names: List[str], game: clue.Game = MASTER_DETECTIVE):
+    def __init__(self, players_names: List[str], current_player: str, game: clue.Game = MASTER_DETECTIVE):
         if len(players_names) != len(set(players_names)):
             raise Exception(f"duplicate player names: {players_names}")
 
         # this MUST be an ordered list for printing to work
         self.players_names = [s.upper() for s in players_names]
+        self.current_player = current_player
         self.game = game
         self.data = {}
         for card in game.all_cards:  # clue.ALL_CARDS:
@@ -101,12 +102,20 @@ class Scoresheet:
         self.data[card][player] = state
 
     def set_fact(self, fact):
-        self.set_ownership(fact.player, fact.card, fact.card_state())
+        if fact.player is None:
+            self.excluded.add(fact.card)
+        else:
+            self.set_ownership(fact.player, fact.card, fact.card_state())
 
     def has_fact(self, fact) -> bool:
         """
         :return: True if the scoresheet already KNOWS the fact, False=DOESN'T know it
         """
+        if fact.player is None:
+            if fact.has_card:
+                return self.is_excluded(fact.card)
+            else:
+                raise Exception(f"fact {fact} is invalid")
         return self.get_ownership(fact.player, fact.card) == fact.card_state()  #int == int
 
     def get_ownership(self, player: str, card: str) -> int:
@@ -242,7 +251,7 @@ class Scoresheet:
 
 
 if __name__ == "__main__":
-    sheet = Scoresheet(["A", "B", "C"])
+    sheet = Scoresheet(["A", "B", "C"], current_player='A')
     sheet.set_ownership("A", clue.GREEN, clue.HAS_CARD)
     sheet.set_ownership("A", clue.KNIFE, clue.DOESNT_HAVE_CARD)
     sheet.set_ownership("B", clue.KNIFE, clue.DOESNT_HAVE_CARD)

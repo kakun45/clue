@@ -13,7 +13,7 @@ class RulesTests(unittest.TestCase):
 
     def test_rule1(self):
 
-        sheet = Scoresheet(["A", "B", "C"])
+        sheet = Scoresheet(["A", "B", "C"], current_player='A')
         results = rules.rule_1(sheet, None)
         self.assertEqual([], results)
 
@@ -23,7 +23,7 @@ class RulesTests(unittest.TestCase):
         self.assertTrue(rules.Fact("C", clue.GREEN, False) in results)
 
     def test_rule1b(self):
-        sheet = Scoresheet(["A", "B", "C"])
+        sheet = Scoresheet(["A", "B", "C"], current_player='A')
         sheet.set_ownership("A", clue.GREEN, clue.HAS_CARD)
         sheet.set_ownership("B", clue.GREEN, clue.DOESNT_HAVE_CARD)
         results = rules.rule_1(sheet, None)
@@ -44,7 +44,7 @@ class RulesTests(unittest.TestCase):
         self.assertFalse(rules.Fact('Xen', clue.PLUM, False) in results2)
 
     def test_rule3(self):
-        scoresheet = Scoresheet(["Dav", "Xen", "Oli"])
+        scoresheet = Scoresheet(["Dav", "Xen", "Oli"], current_player='Dav')
         turn1_history = [LogEntry(clue.PLUM, clue.KNIFE, clue.STUDIO, "Dav", {"Xen": True, "Oli": False})]
         results = rules.rule_3(scoresheet, turn1_history)
         self.assertEqual(0, len(results))
@@ -60,7 +60,7 @@ class RulesTests(unittest.TestCase):
         self.assertEqual(1, len(results3))
 
     def test_rule4(self):
-        scoresheet = Scoresheet(["Dav", "Xen", "Oli"])
+        scoresheet = Scoresheet(["Dav", "Xen", "Oli"], current_player='Dav')
         results = rules.rule_4(scoresheet, [])
         self.assertEqual(0, len(results))
 
@@ -74,3 +74,17 @@ class RulesTests(unittest.TestCase):
 
         results = rules.rule_4(scoresheet, [])
         self.assertEqual(3, len(results))
+
+    def test_rule5(self):
+        scoresheet = Scoresheet(["A", "B", "C", "D"], current_player='D')
+        scoresheet.set_ownership("B", clue.PLUM, clue.DOESNT_HAVE_CARD)
+        scoresheet.set_ownership("C", clue.PLUM, clue.DOESNT_HAVE_CARD)
+        for card in [clue.PLUM, clue.KNIFE, clue.STUDIO]:
+            scoresheet.set_ownership("D", card, clue.DOESNT_HAVE_CARD)
+        turn_history = [LogEntry(clue.PLUM, clue.KNIFE, clue.STUDIO, "A", {"B": True, "C": True, "D": False})]
+        results = rules.rule_5(scoresheet, turn_history)
+        self.assertEqual(2, len(results))
+        for r in results:
+            self.assertTrue(r.player is None)
+            self.assertTrue(r.has_card)
+            self.assertTrue(r.card in [clue.STUDIO, clue.KNIFE])

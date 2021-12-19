@@ -82,7 +82,7 @@ def rule_3(sheet, turn_history) -> List[Fact]:
             if turn.responses[player_key]:  # "YES"
                 cards = [turn.suspect, turn.weapon, turn.room]
                 actual_states = sheet.get_ownership_cards(player_key, cards)
-                looking_for = [clue.BLANK, clue.DOESNT_HAVE_CARD, clue.DOESNT_HAVE_CARD]
+                looking_for = [clue.BLANK, clue.DOESNT_HAVE_CARD, clue.DOESNT_HAVE_CARD]  # looking for 2 doesn't_have-s
                 if sorted(actual_states) == sorted(looking_for):
 
                     the_card = None
@@ -122,21 +122,42 @@ def rule_4(sheet, turn_history) -> List[Fact]:
 
 
 def rule_5(sheet, turn_history) -> List[Fact]:
-    # todo if the asker asks with one of his cards, and 2 ppl have them, we don;t need to know who has it, we mark they
-    #  aren't the answer
-    pass
+    """ 4 player game: the asker asks with one of his cards, and 2 ppl have them, we don;t need to know who has it, we mark they
+    aren't the answer
+    """
+    # skip if less than 4 players
+    if len(sheet.players_names) < 4:
+        return []
+    results = []
+    for turn in turn_history:
+        cards = [turn.suspect, turn.weapon, turn.room]
+        # exactly 2 people must have responded yes, and neither can be the current player:
+        ppl_responded_yes = [player_key for player_key in turn.responses if turn.responses[player_key]]
+        if len(ppl_responded_yes) == 2 and sheet.current_player not in ppl_responded_yes and sheet.current_player != turn.asker:
+            # sanity check:  current player shouldn't have any of these cards: [2,2,2]
+            if [sheet.get_ownership(sheet.current_player, card) for card in cards] == [clue.DOESNT_HAVE_CARD, clue.DOESNT_HAVE_CARD, clue.DOESNT_HAVE_CARD]:
+                # look for one card not owned by ppl_responded_yes, and two cards where we have blanks for both players
+                neither_has_it = []
+                both_are_blank = []
+                player_b, player_c = ppl_responded_yes
+                for card in cards:
+                    if sheet.get_ownership(player_b, card) == clue.DOESNT_HAVE_CARD and sheet.get_ownership(player_c, card) == clue.DOESNT_HAVE_CARD:
+                        neither_has_it.append(card)
+                    elif sheet.get_ownership(player_b, card) == clue.BLANK and sheet.get_ownership(player_c, card) == clue.BLANK:
+                        both_are_blank.append(card)
+                if len(neither_has_it) == 1 and len(both_are_blank) == 2:
+                    results.append(Fact(None, both_are_blank[0], True))
+                    results.append(Fact(None, both_are_blank[1], True))
+
+    return results
 
 
 def rule_6(sheet, turn_history) -> List[Fact]:
     pass
 
 
-def rule_7(sheet, turn_history) -> List[Fact]:
-    pass
-
-
 def run_all(sheet, turn_history) -> List[Fact]:
-    rules = [rule_1, rule_2, rule_3, rule_4]  #rule_5, rule_6, rule_7]
+    rules = [rule_1, rule_2, rule_3, rule_4, rule_5]  #rule_5, rule_6, rule_7]
     results = []
     for f in rules:
         results += f(sheet, turn_history)
