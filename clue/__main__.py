@@ -55,17 +55,8 @@ def main():
 if __name__ == "__main__":
     main()
 
-    # TODO:  prevent the line parser from allowing you to put the same player in `asker` and `responses`
-    # TODO make sure asker is not in the responses of a log entry (and have a 'reset' command that resets the current entry)
     # TODO add an "undo" function
-    # todo while playig save it into a file, and reload from .json
+    # todo while playing save it into a file, and reload from .json
     # todo propose whose turn it is? unless someone won't make it into a room
-    # todo start adding intelligence to figure out the cards players have >> WIP
-    # todo set up a 'test' case with preset players and scoresheet partially filled up
-    # todo combine 'next' + 'analyze'
 
-    # todo when I type analyze it should to all of them it should keep running analyze until there is no new info
-    # todo select which game we're using: with wich set of weapons/suspects/rooms
-
-
-    # todo VS typing 2ce player has the card "Dave=y" and "set card player=y" let it figure out only one entry of either
+    # todo VS typing 2ce player has the card "Dave=y" and "set card Dave=y" let it figure out only one entry of either

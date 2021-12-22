@@ -58,6 +58,20 @@ class ClueRepl:
             except ValueError:
                 print(f"It MUST be a number.")
 
+    def analyze(self, turn_history):
+        print("Analysis Results:")
+        # need to do more passes until run_all() returns empty list
+        while True:
+            results = clue.rules.run_all(self.scoresheet, turn_history)
+            for result in results:
+                print(result)
+                self.scoresheet.set_fact(result)
+            if len(results) < 1:
+                break
+            else:
+                print("....")
+        print("")
+
     def do_input(self):
         current_entry = turn_log.LogEntry()
         turn_history = []
@@ -86,31 +100,30 @@ class ClueRepl:
                     if current_entry.is_valid(self.scoresheet.player_count()):
                         turn_history.append(current_entry)
                         current_entry = turn_log.LogEntry()
+                        self.analyze(turn_history)  # runs "next" & "analyze"
                     else:
                         print(f"Current turn is not finished: {current_entry}")
+
+                elif line.strip().lower() == "clear":   # clears out wrong current_entry
+                    current_entry = turn_log.LogEntry()  # (command that resets the current entry)
                 elif line.strip().lower() == "history":    # print out turn history
                     for i, x in enumerate(turn_history):
                         print(i + 1, x)
 
                 elif line.strip().lower() == "analyze":
-                    print("Analysis Results:")
-                    # need to do more passes until run_all() returns empty list
-                    while True:
-                        results = clue.rules.run_all(self.scoresheet, turn_history)
-                        for result in results:
-                            print(result)
-                            self.scoresheet.set_fact(result)
-                        if len(results) < 1:
-                            break
-                        else:
-                            print("....")
-                    print("")
+                    self.analyze(turn_history)
 
                 else:
                     asker, cards, answers = self.parse_line(line)
                     should_update = True
+                    # don't let them put the same player as both "asker" and in the responses on the same line ONLY
+                    # print(f"asker={asker} answers={answers}")
+                    asker_has_responded = [i for i in answers if asker in i]
+                    if asker_has_responded:
+                        print(f"Warning: Did you put the asker in responses?")
+                        should_update = False
                     # confirm when I'm about overwrite existing info of a turn b4 removing a previous player
-                    if asker and current_entry.asker:
+                    if asker and current_entry.asker and asker != current_entry.asker:
                         print(f"Warning: Did you forget to type 'next'?")
                         yn = input(f"Enter 'y' to change the asker from {current_entry.asker} to {asker}. y/n>")
                         if yn.strip().lower() == "y":
@@ -120,6 +133,8 @@ class ClueRepl:
 
                     if should_update:
                         ClueRepl.update_entry(self.scoresheet.game, current_entry, asker, cards, answers)
+                        if current_entry.asker in current_entry.responses:
+                            print(f"WARNING:  {current_entry.asker} is both the 'asker' and one of the responses")
                     else:
                         print(f"ignoring this input: {line}")
 
@@ -211,6 +226,11 @@ class ClueRepl:
             raise Exception(f"invalid entry: {s}")
 
     def parse_line(self, line):  # TODO rename to something like parse_guess_line
+        """
+
+        :param line: asker card card card responder1=yes responder2=no
+        :return:
+        """
         tokens = line.strip().split()
         asker = None
         cards = []
@@ -224,7 +244,7 @@ class ClueRepl:
                 # make sure its a valid player! split on '=' also if bob=yes => error
                 if player.upper() not in self.scoresheet.players_names:
                     raise Exception(f"bad input: invalid player {player}")
-                answers.append((player, ClueRepl.response_bool(response)))
+                answers.append((player.upper(), ClueRepl.response_bool(response)))
             else:
                 # it must be a clue card
                 matches = ClueRepl.resolve_card(self.scoresheet.game, token)  # this will return ["Dining", "drawing"] if input "d"
