@@ -7,7 +7,6 @@ from clue.turn_log import LogEntry
 class TurnLogTests(unittest.TestCase):
     def test_is_valid(self):
         data = LogEntry()
-        # self.assertEqual(False, data.is_valid(4))
         self.assertFalse(data.is_valid(4))
 
         data2 = LogEntry(
@@ -17,7 +16,6 @@ class TurnLogTests(unittest.TestCase):
             asker="Dave",
             responses={"A": True, "B": False, "C": True},
         )
-        # self.assertEqual(True, data2.is_valid(4))
         self.assertTrue(data2.is_valid(4))
 
         data3 = LogEntry(

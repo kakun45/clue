@@ -1,5 +1,18 @@
 # Clue Worksheet Project
 
+Digital Player's Assistant for the game Clue. 
+  
+Features:
+- generates a digital score sheet with facts about a game, color codes its guesses
+- watches over all the rules and automatically adds new info in player's scoresheet
+- supports different sets of cards in a game
+
+## How to test
+
+```
+python -m pytest tests/
+```
+
 ## How to format
 
 note: black's default is 88 char per line

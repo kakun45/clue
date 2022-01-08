@@ -3,7 +3,7 @@ from typing import List
 
 class Game:
     """
-    Stores info about cards in one game
+    Stores info about which cards are in a game
     """
     def __init__(self, suspects, weapons, rooms):
         self.suspects = suspects
@@ -21,7 +21,6 @@ ANSWER = 2  # this was the murder weapon/suspect/room
 BLANK = 0  # NO info about this (player, card) yet. We don't know if the player has it or doesn't have it
 HAS_CARD = 1
 DOESNT_HAVE_CARD = 2
-
 
 MUSTARD = "Mustard"
 PLUM = "Plum"
@@ -75,9 +74,10 @@ ROOMS = [
     FOUNTAIN,
 ]
 
-# ALL_CARDS = PEOPLE + WEAPONS + ROOMS
-
+# the original american version of the game
 MASTER_DETECTIVE = Game(PEOPLE, WEAPONS, ROOMS)
+
+# most newer versions of the game
 GREEN_BOARD = Game(
     suspects=[
         MUSTARD,

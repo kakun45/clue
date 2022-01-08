@@ -1,14 +1,6 @@
 from typing import Dict
 
 
-# class TurnLog:
-#     def __init__(self):
-#         self.entries = []
-#
-#     def append(self, entry):
-#         self.entries.append(entry)
-
-
 class LogEntry:
     """
     Carries info about one Guess turn

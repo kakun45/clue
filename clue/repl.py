@@ -21,8 +21,6 @@ class ClueRepl:
             assert player not in scoresheet.game.all_cards
             assert "=" not in player
 
-        # self.current_entry = turn_log.LogEntry()
-
     @staticmethod
     def prompt_players_list() -> List[str]:
         """

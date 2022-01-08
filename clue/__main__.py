@@ -23,8 +23,6 @@ def printing_test(data):
         data.set_ownership(s, clue.KNIFE, DOESNT_HAVE_CARD)
 
     data.print_scoresheet()
-    # r = clue.pad_right("hello", 8)
-    # print(f"|{r}|")
 
 
 def main():
