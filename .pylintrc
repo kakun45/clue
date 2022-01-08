@@ -1,0 +1,17 @@
+[MESSAGES CONTROL]
+disable=pointless-string-statement,
+    missing-function-docstring,
+    missing-module-docstring,
+    invalid-name,
+    line-too-long, # black takes care of this
+    no-else-return,
+    too-many-return-statements,
+    bad-continuation,  # conflicts with black
+    too-many-arguments,
+    too-many-nested-blocks,
+    too-many-branches,
+    no-else-raise,
+    no-else-break,
+    too-many-statements,
+    too-many-locals,
+    too-few-public-methods,

@@ -150,6 +150,8 @@ class Scoresheet:
             if self.get_ownership(player, card) == clue.HAS_CARD:
                 return player
 
+        return None
+
     def set_excluded(self, card: str) -> None:
         """
         Call this method to record the fact that a card cannot be the answer (even though we

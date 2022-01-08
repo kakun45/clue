@@ -33,7 +33,7 @@ class Fact:
         )
 
 
-def rule_1(sheet, turn_history) -> List[Fact]:
+def rule_1(sheet, turn_history) -> List[Fact]:  # pylint: disable=unused-argument
     """
     Only one player can have a card
     :return:
@@ -57,7 +57,7 @@ def rule_1(sheet, turn_history) -> List[Fact]:
     return results
 
 
-def rule_2(sheet, turn_history) -> List[Fact]:
+def rule_2(sheet, turn_history) -> List[Fact]:  # pylint: disable=unused-argument
     """
     During the turn we just found out that one of the players doesn't have all 3 asking cards
     :return: results -> List[Fact]
@@ -108,7 +108,7 @@ def rule_3(sheet, turn_history) -> List[Fact]:
     return results
 
 
-def rule_4(sheet, turn_history) -> List[Fact]:
+def rule_4(sheet, turn_history) -> List[Fact]:  # pylint: disable=unused-argument
     """
     Every weapon except one is own by a player, that One is an Answer
     :param sheet:
@@ -186,7 +186,7 @@ def rule_5(sheet, turn_history) -> List[Fact]:
     return results
 
 
-def rule_6(sheet, turn_history) -> List[Fact]:
+def rule_6(sheet, turn_history) -> List[Fact]:  # pylint: disable=unused-argument
     pass
 
 

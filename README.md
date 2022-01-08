@@ -2,8 +2,15 @@
 
 ## How to format
 
+note: black's default is 88 char per line
+
 ```
 black FILENAME
+```
+
+## How to lint
+```
+pylint clue
 ```
 
 ## todo:

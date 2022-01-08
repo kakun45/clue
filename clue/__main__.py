@@ -44,7 +44,7 @@ def main():
         data.set_ownership(player, card, clue.DOESNT_HAVE_CARD)
 
     repl = clue.repl.ClueRepl(data)
-    """ 
+    """
     "quit" >> exits the repl hence all the entries are gone! DO NOT type that b4 the end of the game! 
         # TODO? add 'are you sure?' message
     "set" >> data.set_ownership('Dave', clue.PLUM, HAS_CARD) 

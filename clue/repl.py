@@ -140,10 +140,12 @@ class ClueRepl:
                         yn = input(
                             f"Enter 'y' to change the asker from {current_entry.asker} to {asker}. y/n>"
                         )
-                        if yn.strip().lower() == "y":
-                            should_update = True
-                        else:
-                            should_update = False
+
+                        should_update = bool(yn.strip().lower() == "y")
+                        # if yn.strip().lower() == "y":
+                        #     should_update = True
+                        # else:
+                        #     should_update = False
 
                     if should_update:
                         ClueRepl.update_entry(
@@ -156,7 +158,7 @@ class ClueRepl:
                     else:
                         print(f"ignoring this input: {line}")
 
-            except Exception as ex:
+            except Exception as ex:  # pylint: disable=broad-except
                 print(ex)
 
     @staticmethod
