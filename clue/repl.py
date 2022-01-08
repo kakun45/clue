@@ -12,9 +12,10 @@ class ClueRepl:
 
     > dave knif plum di olivia=no
     input:  "dave knif plum di olivia=no"
-    tokens:  {player: "dave"}, {card: knife}, {card: plum}, {card: dining}, {card
+    tokens:  {player: "dave"}, {card: knife}, {card: plum}, {card: dining}, {card:..}
 
     """
+
     def __init__(self, scoresheet):
         self.scoresheet = scoresheet  # this is NOT the module scoresheet.py
         for player in scoresheet.players_names:
@@ -30,7 +31,9 @@ class ClueRepl:
         """
         players_list = []
         line = input("Enter the # of players > ")
-        print("Enter the player names in the order they should appear on the scoresheet")
+        print(
+            "Enter the player names in the order they should appear on the scoresheet"
+        )
         number_of_players = int(line)
         for player in range(number_of_players):
             name = input(f"Name Player {player + 1} > ").strip()
@@ -49,7 +52,7 @@ class ClueRepl:
         :param player_list:
         :return: str
         """
-        for i,player in enumerate(player_list):
+        for i, player in enumerate(player_list):
             print(f"{i+1}) Player {player}")
         while True:
             try:
@@ -85,14 +88,19 @@ class ClueRepl:
                 elif line.strip().lower() == "sheet":
                     self.scoresheet.print_scoresheet()
                 elif line.strip().lower().startswith("set "):  # can change to 'owner'
-                    cards, player, state = ClueRepl.parse_set_line(self.scoresheet.game, line)
+                    cards, player, state = ClueRepl.parse_set_line(
+                        self.scoresheet.game, line
+                    )
                     for card in cards:
                         self.scoresheet.set_ownership(player, card, state)
                         # print(f"scoresheet.data[card][player] = state")
                         if state == clue.BLANK:
                             print(f"setting {player} and {card} to 'unknown' ")
                         else:
-                            verb = {clue.HAS_CARD: "has", clue.DOESNT_HAVE_CARD: "doesn't have"}.get(state)
+                            verb = {
+                                clue.HAS_CARD: "has",
+                                clue.DOESNT_HAVE_CARD: "doesn't have",
+                            }.get(state)
                             print(f"marking: {player} {verb} {card}")
 
                 elif line.strip().lower() == "next":
@@ -104,9 +112,10 @@ class ClueRepl:
                     else:
                         print(f"Current turn is not finished: {current_entry}")
 
-                elif line.strip().lower() == "clear":   # clears out wrong current_entry
-                    current_entry = turn_log.LogEntry()  # (command that resets the current entry)
-                elif line.strip().lower() == "history":    # print out turn history
+                elif line.strip().lower() == "clear":  # clears out wrong current_entry
+                    # command that resets the current entry:
+                    current_entry = turn_log.LogEntry()
+                elif line.strip().lower() == "history":  # prints out the turn history
                     for i, x in enumerate(turn_history):
                         print(i + 1, x)
 
@@ -116,7 +125,10 @@ class ClueRepl:
                 else:
                     asker, cards, answers = self.parse_line(line)
                     should_update = True
-                    # don't let them put the same player as both "asker" and in the responses on the same line ONLY
+                    # don't let them put the same player as both "asker" and in the responses on the same line ONLY.
+                    # and have a 'reset' command that resets the current entry from:
+                    # Current Turn(2): B asks (Plum, Wrench, Gazebo), answers:{'a': False, 'b': True}
+
                     # print(f"asker={asker} answers={answers}")
                     asker_has_responded = [i for i in answers if asker in i]
                     if asker_has_responded:
@@ -125,16 +137,22 @@ class ClueRepl:
                     # confirm when I'm about overwrite existing info of a turn b4 removing a previous player
                     if asker and current_entry.asker and asker != current_entry.asker:
                         print(f"Warning: Did you forget to type 'next'?")
-                        yn = input(f"Enter 'y' to change the asker from {current_entry.asker} to {asker}. y/n>")
+                        yn = input(
+                            f"Enter 'y' to change the asker from {current_entry.asker} to {asker}. y/n>"
+                        )
                         if yn.strip().lower() == "y":
                             should_update = True
                         else:
                             should_update = False
 
                     if should_update:
-                        ClueRepl.update_entry(self.scoresheet.game, current_entry, asker, cards, answers)
+                        ClueRepl.update_entry(
+                            self.scoresheet.game, current_entry, asker, cards, answers
+                        )
                         if current_entry.asker in current_entry.responses:
-                            print(f"WARNING:  {current_entry.asker} is both the 'asker' and one of the responses")
+                            print(
+                                f"WARNING:  {current_entry.asker} is both the 'asker' and one of the responses"
+                            )
                     else:
                         print(f"ignoring this input: {line}")
 
@@ -146,7 +164,7 @@ class ClueRepl:
         """
         :param game:
         :param line: is a line like "set plum dave=yes"   |  yes,no, or ? for blank ... or even 'set plum dave=' for blank
-        :return
+        :return: ([clue.PLUM]: List, "dave": str, clue.HAS_CARD: int)
         """
         line = line.strip().lower()
         tokens = line.split()
@@ -157,22 +175,35 @@ class ClueRepl:
             raise Exception()
 
         for card in tokens[1:-1]:  # it must be clue cards
-            matches = ClueRepl.resolve_card(game, card)  # this will return ["Dining", "drawing"] if input "d"
+            # this will return ["Dining", "Drawing"] if input "d":
+            matches = ClueRepl.resolve_card(game, card)
             if len(matches) != 1:
                 # we don't know which card they meant
-                raise Exception(f"bad input: unable to match '{card}' to a single card.  Matches={matches}")
+                raise Exception(
+                    f"bad input: unable to match '{card}' to a single card.  Matches={matches}"
+                )
             cards.append(matches[0])
         player, response = tokens[-1].split("=", maxsplit=1)
-        if response == '':
+        if response == "":
             state = clue.BLANK
         elif ClueRepl.response_bool(response):
             state = clue.HAS_CARD
         else:
             state = clue.DOESNT_HAVE_CARD
-        return cards, player, state  # ([clue.PLUM]: List, "dave": str, clue.HAS_CARD: int)
+        return (
+            cards,
+            player,
+            state,
+        )  # -> ([clue.PLUM]: List, "dave": str, clue.HAS_CARD: int)
 
     @staticmethod
-    def update_entry(game: clue.Game, current_entry, asker: str, cards: List[str], answers: List[Tuple[str, bool]]):
+    def update_entry(
+        game: clue.Game,
+        current_entry,
+        asker: str,
+        cards: List[str],
+        answers: List[Tuple[str, bool]],
+    ):
         """
         Updates `current_entry` using information parsed from parse_line()
         :param game:
@@ -189,17 +220,23 @@ class ClueRepl:
         for card in cards:
             if card in game.suspects:
                 if suspect:
-                    raise Exception(f"Two suspects in one line are not accepted: {suspect}, {card}")
+                    raise Exception(
+                        f"Two suspects in one line are not accepted: {suspect}, {card}"
+                    )
                 else:
                     suspect = card
             elif card in game.rooms:
                 if room:
-                    raise Exception(f"Two rooms in one line are not accepted: {room}, {card}")
+                    raise Exception(
+                        f"Two rooms in one line are not accepted: {room}, {card}"
+                    )
                 else:
                     room = card
             elif card in game.weapons:
                 if weapon:
-                    raise Exception(f"Two weapons in one line are not accepted: {weapon}, {card}")
+                    raise Exception(
+                        f"Two weapons in one line are not accepted: {weapon}, {card}"
+                    )
                 else:
                     weapon = card
 
@@ -216,8 +253,19 @@ class ClueRepl:
 
     @staticmethod  # validate answers:'y','n','nope','none','nothing','i_have_one' ...
     def response_bool(s: str) -> bool:
-        truthy = ["y",  "yes", 'yep', "have", "has", "t", "true", "do"]
-        falsy = ["n", "no", 'not', "nope", "none", "f", "false", "don't", "nothing"]
+        truthy = ["y", "yes", "yep", "have", "has", "t", "true", "do"]
+        falsy = [
+            "n",
+            "no",
+            "not",
+            "nope",
+            "none",
+            "f",
+            "false",
+            "don't",
+            "dont",
+            "nothing",
+        ]
         if s.lower() in truthy:
             return True
         elif s.lower() in falsy:
@@ -240,17 +288,23 @@ class ClueRepl:
             if token.upper() in self.scoresheet.players_names:  # it must be the asker
                 asker = token.upper()
             elif "=" in token:
-                player, response = token.split("=", maxsplit=1)  # maxsplit is number of times to use split()
+                player, response = token.split(
+                    "=", maxsplit=1
+                )  # maxsplit is number of times to use split()
                 # make sure its a valid player! split on '=' also if bob=yes => error
                 if player.upper() not in self.scoresheet.players_names:
                     raise Exception(f"bad input: invalid player {player}")
                 answers.append((player.upper(), ClueRepl.response_bool(response)))
             else:
                 # it must be a clue card
-                matches = ClueRepl.resolve_card(self.scoresheet.game, token)  # this will return ["Dining", "drawing"] if input "d"
+                matches = ClueRepl.resolve_card(
+                    self.scoresheet.game, token
+                )  # this will return ["Dining", "Drawing"] if input "d"
                 if len(matches) != 1:
                     # we don't know which card they meant
-                    raise Exception(f"bad input: unable to match {token} to a single card.  Matches={matches}")
+                    raise Exception(
+                        f"bad input: unable to match {token} to a single card.  Matches={matches}"
+                    )
                 cards.append(matches[0])
         return asker, cards, answers
 

@@ -7,7 +7,12 @@ from clue import BLANK, HAS_CARD, DOESNT_HAVE_CARD, MASTER_DETECTIVE
 
 
 class Scoresheet:
-    def __init__(self, players_names: List[str], current_player: str, game: clue.Game = MASTER_DETECTIVE):
+    def __init__(
+        self,
+        players_names: List[str],
+        current_player: str,
+        game: clue.Game = MASTER_DETECTIVE,
+    ):
         if len(players_names) != len(set(players_names)):
             raise Exception(f"duplicate player names: {players_names}")
 
@@ -116,7 +121,9 @@ class Scoresheet:
                 return self.is_excluded(fact.card)
             else:
                 raise Exception(f"fact {fact} is invalid")
-        return self.get_ownership(fact.player, fact.card) == fact.card_state()  #int == int
+        return (
+            self.get_ownership(fact.player, fact.card) == fact.card_state()
+        )  # int == int
 
     def get_ownership(self, player: str, card: str) -> int:
         """
@@ -192,13 +199,21 @@ class Scoresheet:
         --Kitchen----| 1 |   |   |
         (Gazebo)     |   |   |   |
         """
-        titles = {"SUSPECTS": self.game.suspects, "WEAPONS": self.game.weapons, "ROOMS": self.game.rooms}
-        short_names = [Scoresheet.short_name(s) for s in self.players_names]  # HAS THE SAME ORDER AS self.players_names
+        titles = {
+            "SUSPECTS": self.game.suspects,
+            "WEAPONS": self.game.weapons,
+            "ROOMS": self.game.rooms,
+        }
+        short_names = [
+            Scoresheet.short_name(s) for s in self.players_names
+        ]  # HAS THE SAME ORDER AS self.players_names
 
         for key in titles:
-            #print("")
+            # print("")
             print(clue.INVERTED, end="")
-            print(clue.pad_right(key, clue.longest_word(self.game.all_cards)), "|", end="")
+            print(
+                clue.pad_right(key, clue.longest_word(self.game.all_cards)), "|", end=""
+            )
             for player in short_names:  # short names horizontally:  Dav|Oli|Xen|
                 print(player, end="")
                 print("|", end="")
@@ -211,15 +226,16 @@ class Scoresheet:
                 elif self.is_answer(card):
                     print(clue.ANSWER_TEXT, end="")
 
-                print(clue.pad_right(card, clue.longest_word(self.game.all_cards)), "|", end="")
+                print(
+                    clue.pad_right(card, clue.longest_word(self.game.all_cards)),
+                    "|",
+                    end="",
+                )
                 for player in self.players_names:
                     print(self.box_str(self.get_ownership(player, card)), end="")
                     print("|", end="")
                 print(clue.NORMAL_TEXT, end="")
                 print("")
-
-                #todo save vertical space: print section heading inverted
-                # todo mark set card=y and turn card player=y
 
     @staticmethod
     def short_name(player_name: str) -> str:
@@ -251,7 +267,7 @@ class Scoresheet:
 
 
 if __name__ == "__main__":
-    sheet = Scoresheet(["A", "B", "C"], current_player='A')
+    sheet = Scoresheet(["A", "B", "C"], current_player="A")
     sheet.set_ownership("A", clue.GREEN, clue.HAS_CARD)
     sheet.set_ownership("A", clue.KNIFE, clue.DOESNT_HAVE_CARD)
     sheet.set_ownership("B", clue.KNIFE, clue.DOESNT_HAVE_CARD)

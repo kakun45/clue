@@ -8,6 +8,7 @@ class Game:
         self.rooms = rooms
         self.all_cards = suspects + weapons + rooms
 
+
 # Card answer States  (whether the card is the answer or not...)
 UNKNOWN = 0  # we dont know if a player has this card yet
 EXCLUDED = 1  # we know that a player has this card, but we might not know which player
@@ -56,7 +57,20 @@ BILLIARD = "Billiard Room"
 LIBRARY = "Library"
 FOUNTAIN = "Fountain"
 
-ROOMS = [COURTYARD, GAZEBO, DRAWING, DINING, KITCHEN, CARRIAGE, TROPHY, CONSERVATORY, STUDIO, BILLIARD, LIBRARY, FOUNTAIN]
+ROOMS = [
+    COURTYARD,
+    GAZEBO,
+    DRAWING,
+    DINING,
+    KITCHEN,
+    CARRIAGE,
+    TROPHY,
+    CONSERVATORY,
+    STUDIO,
+    BILLIARD,
+    LIBRARY,
+    FOUNTAIN,
+]
 
 # ALL_CARDS = PEOPLE + WEAPONS + ROOMS
 
@@ -109,7 +123,9 @@ def pad_right(word, min_length: int):
     :return: the string word, with spaces added to that it is at least `min_length` long
     """
     padding = min_length - len(word)
-    return word + " " * padding  # " " * -1 --> "" (multiply by negative gives you empty string)
+    return (
+        word + " " * padding
+    )  # " " * -1 --> "" (multiply by negative gives you empty string)
 
 
 NORMAL_TEXT = "\033[0m"
@@ -121,4 +137,3 @@ INVERTED = "\033[7m"
 # ANSWER_TEXT = "\033[41m"  # red highlight
 ANSWER_TEXT = "\033[1m\033[91m"  # bold red
 # ANSWER_TEXT = "\033[1m\033[93m"  # bold yellow
-

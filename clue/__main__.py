@@ -3,6 +3,7 @@ from clue import HAS_CARD, DOESNT_HAVE_CARD
 from clue.scoresheet import Scoresheet
 import clue.repl
 
+
 def printing_test(data):
     data.set_ownership("Dave", clue.MUSTARD, HAS_CARD)
     data.set_ownership("Dave", clue.GREEN, HAS_CARD)
@@ -32,7 +33,7 @@ def main():
     print("2. (newer version of Clue with green board)")
     choice = int(input("Enter version of game to play>"))
     game = [clue.MASTER_DETECTIVE, clue.GREEN_BOARD][choice - 1]
-    #game = clue.MASTER_DETECTIVE
+    # game = clue.MASTER_DETECTIVE
     # game = clue.GREEN_BOARD
     players_list = clue.repl.ClueRepl.prompt_players_list()
     player = clue.repl.ClueRepl.select_player(players_list)

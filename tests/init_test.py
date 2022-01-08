@@ -2,8 +2,8 @@ import unittest
 
 import clue
 
-class InitTests(unittest.TestCase):
 
+class InitTests(unittest.TestCase):
     def test_test_longest(self):
         self.assertEqual(clue.longest_word(clue.MASTER_DETECTIVE.all_cards), 14)
 
