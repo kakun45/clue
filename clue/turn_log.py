@@ -1,7 +1,5 @@
 from typing import Dict
 
-import clue
-
 
 # class TurnLog:
 #     def __init__(self):
@@ -12,6 +10,9 @@ import clue
 
 
 class LogEntry:
+    """
+    Carries info about one Guess turn
+    """
     def __init__(
         self,
         suspect: str = None,

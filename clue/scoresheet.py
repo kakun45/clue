@@ -1,12 +1,13 @@
-import collections
 from typing import List
 
 import clue
-from clue import MUSTARD, PLUM
 from clue import BLANK, HAS_CARD, DOESNT_HAVE_CARD, MASTER_DETECTIVE
 
 
 class Scoresheet:
+    """
+    Stores all the info you learn during a game
+    """
     def __init__(
         self,
         players_names: List[str],
@@ -85,7 +86,7 @@ class Scoresheet:
         if not _excluded_check(self.game.rooms):
             return False
 
-        # 4. A single player seems not to have any cards #todo?
+        # 4. A single player seems not to have any cards
         return True
 
     def set_ownership(self, player: str, card: str, state: int) -> None:
@@ -242,7 +243,7 @@ class Scoresheet:
     @staticmethod
     def short_name(player_name: str) -> str:
         """
-
+        Trim players' names to fit into ### table header to print
         :param player_name:
         :return: a version of player_name that is 3 chars long, to be used as a column heading
         """

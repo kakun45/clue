@@ -1,4 +1,3 @@
-import copy
 from typing import List, Tuple
 
 import clue
@@ -275,11 +274,11 @@ class ClueRepl:
         else:
             raise Exception(f"invalid entry: {s}")
 
-    def parse_line(self, line):  # TODO rename to something like parse_guess_line
+    def parse_line(self, line):
         """
-
+        This parses an input str from a user on a 'guess' turn into tokens. Maybe rename to smt like parse_guess_line
         :param line: asker card card card responder1=yes responder2=no
-        :return:
+        :return: tokens
         """
         tokens = line.strip().split()
         asker = None
@@ -314,7 +313,7 @@ class ClueRepl:
     def resolve_card(game: clue.Game, prefix: str) -> List[str]:
         """
             # prefix="gr"  ->   ["GREEN"]
-            # prefic="D"   ->   ["DINING", "DRAWING"]
+            # prefix="D"   ->   ["DINING", "DRAWING"]
             # prefix="z"   ->   []
         :return: list of EVERY card that matches prefix
         """

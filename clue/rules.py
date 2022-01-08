@@ -4,10 +4,10 @@ import clue
 
 
 class Fact:
+    """
+    Fact that we learn; if a player Has or Doesn't have a card
+    """
     def __init__(self, player: str, card: str, has_card: bool):
-        """
-        player Has or Doesn't have a card
-        """
         self.player = player
         self.card = card
         self.has_card = has_card
@@ -25,6 +25,9 @@ class Fact:
         return self.__str__()
 
     def __eq__(self, other):
+        """
+        Equality for testing
+        """
         return (
             isinstance(other, Fact)
             and self.player == other.player

@@ -2,6 +2,9 @@ from typing import List
 
 
 class Game:
+    """
+    Stores info about cards in one game
+    """
     def __init__(self, suspects, weapons, rooms):
         self.suspects = suspects
         self.weapons = weapons
@@ -10,7 +13,7 @@ class Game:
 
 
 # Card answer States  (whether the card is the answer or not...)
-UNKNOWN = 0  # we dont know if a player has this card yet
+UNKNOWN = 0  # we don't know if a player has this card yet
 EXCLUDED = 1  # we know that a player has this card, but we might not know which player
 ANSWER = 2  # this was the murder weapon/suspect/room
 
