@@ -252,7 +252,7 @@ class ClueRepl:
 
     @staticmethod  # validate answers:'y','n','nope','none','nothing','i_have_one' ...
     def response_bool(s: str) -> bool:
-        truthy = ["y", "yes", "yep", "have", "has", "t", "true", "do"]
+        truthy = ["y", "yes", "yep", "have", "has", "t", "true", "do", "does"]
         falsy = [
             "n",
             "no",
